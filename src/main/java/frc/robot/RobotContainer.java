@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 
@@ -53,13 +54,13 @@ public class RobotContainer {
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
 
-  // Copy the stream so further changes do not affect
-  // driveAngularVelocity
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy() // Copy the stream so further changes do not affect
-                                                                   // driveAngularVelocity
-      .withControllerHeadingAxis(driverXbox::getRightX, driverXbox::getRightY) // Axis which give the desired heading
-                                                                               // angle using trigonometry.
-      .headingWhile(true); // Enable heading based control.
+  // SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(
+  //     driverXbox::getRightX,
+  //     driverXbox::getRightY)
+  //     .headingWhile(true);
+
+  // Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+  // Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
