@@ -31,8 +31,9 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
 
+  
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandPS5Controller driverXbox = new CommandPS5Controller(0);
+  final CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/neo"));
@@ -94,14 +95,19 @@ public class RobotContainer {
    * Flight joysticks}.
    */
   private void configureBindings() {
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> driverXbox.getLeftX() * 0.3,
-        () -> driverXbox.getLeftY() * 0.3,
-        () -> driverXbox.getRightX());
-    drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    // Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+    //     () -> driverXbox.getLeftX() * 0.3,
+    //     () -> driverXbox.getLeftY() * 0.3,
+    //     () -> driverXbox.getRightX());
+    // drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+
+    drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
+
+
+    driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
 
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
