@@ -10,5 +10,7 @@
     "frontright.json",
     "backleft.json",
     "backright.json"
-  ]
+    
+  ],
+  "maxAngularVelocity": 720
 }
