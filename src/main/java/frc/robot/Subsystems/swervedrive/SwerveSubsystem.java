@@ -6,6 +6,13 @@ package frc.robot.Subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -63,6 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+    setupPathPlanner();
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
                                              // angle.
     swerveDrive.setCosineCompensator(false);// !SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for
@@ -142,7 +150,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * ends.
    *
    * @return a Command that tells the robot to drive forward until the command
-   *         ends
+   * ends
    */
   public Command driveForward() {
     return run(() -> {
@@ -166,12 +174,12 @@ public class SwerveSubsystem extends SubsystemBase {
    * Command to drive the robot using translative values and heading as angular
    * velocity.
    *
-   * @param translationX     Translation in the X direction. Cubed for smoother
-   *                         controls.
-   * @param translationY     Translation in the Y direction. Cubed for smoother
-   *                         controls.
+   * @param translationX      Translation in the X direction. Cubed for smoother
+   * controls.
+   * @param translationY      Translation in the Y direction. Cubed for smoother
+   * controls.
    * @param angularRotationX Angular velocity of the robot to set. Cubed for
-   *                         smoother controls.
+   * smoother controls.
    * @return Drive command.
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
@@ -194,9 +202,9 @@ public class SwerveSubsystem extends SubsystemBase {
    * setpoint.
    *
    * @param translationX Translation in the X direction. Cubed for smoother
-   *                     controls.
+   * controls.
    * @param translationY Translation in the Y direction. Cubed for smoother
-   *                     controls.
+   * controls.
    * @param headingX     Heading X to calculate angle of the joystick.
    * @param headingY     Heading Y to calculate angle of the joystick.
    * @return Drive command.
@@ -228,19 +236,19 @@ public class SwerveSubsystem extends SubsystemBase {
    * how the translation vector is used.
    *
    * @param translation   {@link Translation2d} that is the commanded linear
-   *                      velocity of the robot, in meters per
-   *                      second. In robot-relative mode, positive x is torwards
-   *                      the bow (front) and positive y is
-   *                      torwards port (left). In field-relative mode, positive x
-   *                      is away from the alliance wall
-   *                      (field North) and positive y is torwards the left wall
-   *                      when looking through the driver station
-   *                      glass (field West).
+   * velocity of the robot, in meters per
+   * second. In robot-relative mode, positive x is torwards
+   * the bow (front) and positive y is
+   * torwards port (left). In field-relative mode, positive x
+   * is away from the alliance wall
+   * (field North) and positive y is torwards the left wall
+   * when looking through the driver station
+   * glass (field West).
    * @param rotation      Robot angular rate, in radians per second. CCW positive.
-   *                      Unaffected by field/robot
-   *                      relativity.
+   * Unaffected by field/robot
+   * relativity.
    * @param fieldRelative Drive mode. True for field-relative, false for
-   *                      robot-relative.
+   * robot-relative.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     swerveDrive.drive(translation,
@@ -340,7 +348,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * Checks if the alliance is red, defaults to false if alliance isn't available.
    *
    * @return true if the red alliance, false if blue. Defaults to false if none is
-   *         available.
+   * available.
    */
   private boolean isRedAlliance() {
     var alliance = DriverStation.getAlliance();
@@ -485,4 +493,83 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
   }
+   /**
+   * Setup AutoBuilder for PathPlanner.
+   */
+  public void setupPathPlanner()
+  {
+    // Load the RobotConfig from the GUI settings. You should probably
+    // store this in your Constants file
+    RobotConfig config;
+    try
+    {
+      config = RobotConfig.fromGUISettings();
+
+      final boolean enableFeedforward = true;
+      // Configure AutoBuilder last
+      AutoBuilder.configure(
+          swerveDrive::getPose,
+          // Robot pose supplier
+          swerveDrive::resetOdometry,
+          // Method to reset odometry (will be called if your auto has a starting pose)
+          swerveDrive::getRobotVelocity,
+          // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+          (speedsRobotRelative, moduleFeedForwards) -> {
+            if (enableFeedforward)
+            {
+              swerveDrive.drive(
+                  speedsRobotRelative,
+                  swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                  moduleFeedForwards.linearForces()
+                               );
+            } else
+            {
+              swerveDrive.setChassisSpeeds(speedsRobotRelative);
+            }
+          },
+          // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+          new PPHolonomicDriveController(
+              // PPHolonomicController is the built in path following controller for holonomic drive trains
+              new PIDConstants(5.0, 0.0, 0.0),
+              // Translation PID constants
+              new PIDConstants(5.0, 0.0, 0.0)
+              // Rotation PID constants
+          ),
+          config,
+          // The robot configuration
+          () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent())
+            {
+              return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+          },
+          this
+          // Reference to this subsystem to set requirements
+                           );
+
+    } catch (Exception e)
+    {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Get the path follower with events.
+   *
+   * @param pathName PathPlanner path name.
+   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
+   */
+  public Command getAutonomousCommand(String pathName)
+  {
+    // Create a path following command using AutoBuilder. This will also trigger event markers.
+    return new PathPlannerAuto(pathName);
+  }
+
 }
