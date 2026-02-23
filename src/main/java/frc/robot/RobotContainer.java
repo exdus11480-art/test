@@ -120,7 +120,7 @@ drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
   public Command getAutonomousCommand() {
     // Pass in the selected auto from the SmartDashboard as our desired autnomous
     // commmand
-    return autoChooser.getSelected();
+    return drivebase.getAutonomousCommand("New Auto");
   }
 
   public void setMotorBrake(boolean brake) {
