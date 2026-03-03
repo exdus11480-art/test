@@ -4,24 +4,19 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Subsystems.climb.Climb;
 import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
-import java.util.function.Supplier;
 
 import swervelib.SwerveInputStream;
 
@@ -40,7 +35,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/neo"));
-
+  final Climb climb = new Climb();
   // Establish a Sendable Chooser that will be able to be sent to the
   // SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -104,7 +99,8 @@ public class RobotContainer {
 
     drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
     driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
-
+    driverXbox.b().whileTrue(climb.climbUp());
+    driverXbox.x().whileTrue(climb.climbDown());
   }
 
   /**

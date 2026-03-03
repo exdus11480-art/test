@@ -1,30 +1,31 @@
-// package frc.robot.Subsystems.climb;
+package frc.robot.Subsystems.climb;
 
-// import com.ctre.phoenix6.hardware.TalonFX;
-// import com.revrobotics.PersistMode;
-// import com.revrobotics.ResetMode;
-// import com.revrobotics.spark.SparkLowLevel.MotorType;
-// import com.revrobotics.spark.SparkMax;
-// import edu.wpi.first.wpilibj2.command.Command;
-// import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.hardware.TalonFX;
 
-// public class Climb extends SubsystemBase {
-//     private final TalonFX climbMotor;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-//     public Climb() {
-//         climbMotor = new TalonFX(ClimbConfigs.climbMotorID);
-//         climbMotor.setInverted(ClimbConfigs.climbMotorInverted);
-//     }
+public class Climb extends SubsystemBase {
+    private final TalonFX climbMotor;
 
-//     public Command setVoltage(double voltage) {
-//         return startEnd(() -> climbMotor.setVoltage(voltage), () -> climbMotor.setVoltage(0));
-//     }
+    public Climb() {
+        climbMotor = new TalonFX(ClimbConfigs.climbMotorID);
+        climbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
+    }
 
-//     public Command eject() {
-//         return startEnd(() -> climbMotor.setVoltage(-6), () -> climbMotor.setVoltage(0));
-//     }
+    public Command setVoltage(double voltage) {
+        return startEnd(
+            () -> climbMotor.setVoltage(voltage),
+            () -> climbMotor.setVoltage(0)
+        );
+    }
 
-//     public Command testing() {
-//         return startEnd(() -> climbMotor.set(1), () -> climbMotor.set(0));
-//     }
-// }
+    public Command climbUp() {
+        return setVoltage(6);
+    }
+
+    public Command climbDown() {
+        return setVoltage(-6);
+    }
+
+}
