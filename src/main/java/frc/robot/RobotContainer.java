@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Subsystems.climb.Climb;
+import frc.robot.Subsystems.intake.Intake;
+import frc.robot.Subsystems.shooter.Shooter;
 import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
@@ -30,12 +32,16 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
+  //controller
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-      "swerve/neo"));
-  final Climb climb = new Climb();
+
+  //subsystems
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/neo"));
+
+  private final Climb climb = new Climb();
+  private final Shooter shooter = new Shooter();
+  private final Intake intake = new Intake();
+
   // Establish a Sendable Chooser that will be able to be sent to the
   // SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -51,15 +57,6 @@ public class RobotContainer {
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
-
-  // SwerveInputStream driveDirectAngle =
-  // driveAngularVelocity.copy().withControllerHeadingAxis(
-  // driverXbox::getRightX,
-  // driverXbox::getRightY)
-  // .headingWhile(true);
-
-  // Command driveFieldOrientedDirectAngle =
-  // drivebase.driveFieldOriented(driveDirectAngle);
 
   Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
@@ -99,10 +96,36 @@ public class RobotContainer {
 
     drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
     driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
-    driverXbox.b().whileTrue(climb.climbUp());
-    driverXbox.x().whileTrue(climb.climbDown());
+
+    //climb
+    driverXbox.pov(0).whileTrue(climbUpCommand());
+    driverXbox.pov(180).whileTrue(climbDownCommand());
+    
+    //shooter and intake and eject
+    driverXbox.rightTrigger().whileTrue(shootCommand());
+    driverXbox.leftTrigger().whileTrue(intakeCommand());
+    driverXbox.rightBumper().whileTrue(ejectCommand());
   }
 
+
+private Command climbUpCommand() {
+    return climb.setVoltage(6);
+}
+
+private Command climbDownCommand() {
+    return climb.setVoltage(-6);
+}
+
+private Command shootCommand() {
+    return shooter.setVoltage(10).alongWith(intake.setVoltage(9));
+}
+private Command intakeCommand() {
+    return shooter.setVoltage(7.9).alongWith(intake.setVoltage(-9));
+}
+
+private Command ejectCommand() {
+    return shooter.setVoltage(-7.9).alongWith(intake.setVoltage(9));
+}
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
