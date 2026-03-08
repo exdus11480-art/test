@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,6 +19,9 @@ import frc.robot.Subsystems.shooter.Shooter;
 import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
+import java.util.jar.Attributes.Name;
+
+import com.pathplanner.lib.auto.NamedCommands;
 
 import swervelib.SwerveInputStream;
 
@@ -32,8 +36,10 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
 
+
   // Controllers
   final CommandXboxController driverXbox = new CommandXboxController(0);
+ 
 
   // Subsystems
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
@@ -47,6 +53,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
+NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
@@ -83,30 +90,36 @@ public class RobotContainer {
   }
 
   private Command climbDownCommand() {
-    return climb.setVoltage(-6);
+    return climb.setVoltage(-6); 
   }
 
   private Command shootCommand() {
-    return shooter.setVoltage(10).alongWith(intake.setVoltage(9));
-  }
-
+return shooter.run(() -> shooter.setVoltage(12))
+.withTimeout(1.0)
+.andThen(intake.run(() -> intake.setVoltage(12)).withTimeout(1.0))
+.finallyDo(() -> {
+shooter.setVoltage(0);
+intake.setVoltage(0);
+});
+}
   private Command intakeCommand() {
-    return shooter.setVoltage(7.9).alongWith(intake.setVoltage(-9));
+    return shooter.setVoltage(-5).alongWith(intake.setVoltage(-12));
 
   }
+  
 
   private Command ejectCommand() {
-    return shooter.setVoltage(-7.9).alongWith(intake.setVoltage(9));
+    return shooter.setVoltage(-7.9).alongWith(intake.setVoltage(12));
   }
-
 
 
 
   public Command getAutonomousCommand() {
-    return drivebase.getAutonomousCommand("New Auto");
+    return drivebase.getAutonomousCommand("New New Auto");
   }
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
+
 }
