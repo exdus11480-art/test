@@ -90,17 +90,19 @@ public class RobotContainer {
     return climb.setVoltage(-6);
   }
 
-  private Command shootCommand() {
-    return shooter.setVoltage(-8).alongWith(intake.setVoltage(8));
-  }
+private Command shootCommand() {
+    return shooter.setVoltage(-10).alongWith(
+        Commands.waitSeconds(1.2).andThen(intake.setVoltage(10))
+    );
+}
 
   private Command intakeCommand() {
-    return shooter.setVoltage(-8).alongWith(intake.setVoltage(6));
+    return shooter.setVoltage(-4).alongWith(intake.setVoltage(-8));
 
   }
 
   private Command ejectCommand() {
-    return shooter.setVoltage(-7.9).alongWith(intake.setVoltage(12));
+    return shooter.setVoltage(5).alongWith(intake.setVoltage(6));
   }
 
   public Command getAutonomousCommand() {
