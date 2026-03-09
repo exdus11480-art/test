@@ -18,7 +18,8 @@ public class ShooterConfigs {
             .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimit(40)
                     .withSupplyCurrentLimitEnable(true)
-                    .withStatorCurrentLimit(40)
+                    .withStatorCurrentLimit(40
+                    )
                     .withStatorCurrentLimitEnable(true))
             .withVoltage(new VoltageConfigs()
                     .withPeakForwardVoltage(12)

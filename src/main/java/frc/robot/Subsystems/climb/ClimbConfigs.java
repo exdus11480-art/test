@@ -12,10 +12,9 @@ public class ClimbConfigs {
 
     static final int climbMotorID = 1;
     static final int followerClimbMotorID = 2;
-
     static final TalonFXConfiguration climbMotorConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs()
-                    .withInverted(InvertedValue.Clockwise_Positive)
+                    .withInverted(InvertedValue.CounterClockwise_Positive)
                     .withNeutralMode(NeutralModeValue.Brake))
             .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimit(40)
@@ -26,10 +25,10 @@ public class ClimbConfigs {
                     .withPeakForwardVoltage(12)
                     .withPeakReverseVoltage(-12))
                  //add software limit switch configuration>
-            .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                    .withForwardSoftLimitEnable(true)
-                    .withForwardSoftLimitThreshold(50)
-                    .withReverseSoftLimitEnable(true)
-                    .withReverseSoftLimitThreshold(0)); 
+             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+             .withForwardSoftLimitEnable(true)
+             .withForwardSoftLimitThreshold(50)
+             .withReverseSoftLimitEnable(true)
+             .withReverseSoftLimitThreshold(0)); 
 
 }

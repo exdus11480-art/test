@@ -19,7 +19,7 @@ public class Climb extends SubsystemBase {
         climbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
         followerClimbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
         climbMotor.setPosition(0);
-        followerClimbMotor.setControl(new Follower(climbMotor.getDeviceID(), MotorAlignmentValue.Aligned));
+    followerClimbMotor.setControl(new Follower(climbMotor.getDeviceID(), MotorAlignmentValue.Aligned));
     }
 
     public Command setVoltage(double voltage) {
