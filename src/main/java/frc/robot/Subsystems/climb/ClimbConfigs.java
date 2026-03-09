@@ -23,12 +23,12 @@ public class ClimbConfigs {
                     .withStatorCurrentLimitEnable(true))
             .withVoltage(new VoltageConfigs()
                     .withPeakForwardVoltage(12)
-                    .withPeakReverseVoltage(-12));
+                    .withPeakReverseVoltage(-12))
                  //add software limit switch configuration>
-             //.withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                   //.withForwardSoftLimitEnable(true)
-                 //.withForwardSoftLimitThreshold(50)
-               //.withReverseSoftLimitEnable(true)
-             // .withReverseSoftLimitThreshold(0)); 
+             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+             .withForwardSoftLimitEnable(true)
+             .withForwardSoftLimitThreshold(50)
+             .withReverseSoftLimitEnable(true)
+             .withReverseSoftLimitThreshold(0)); 
 
 }

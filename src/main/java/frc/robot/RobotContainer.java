@@ -93,17 +93,12 @@ NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
     return climb.setVoltage(-6); 
   }
 
-  private Command shootCommand() {
-return shooter.run(() -> shooter.setVoltage(12))
-.withTimeout(1.0)
-.andThen(intake.run(() -> intake.setVoltage(12)).withTimeout(1.0))
-.finallyDo(() -> {
-shooter.setVoltage(0);
-intake.setVoltage(0);
-});
+  private Command
+   shootCommand() {
+  return shooter.setVoltage(-12).alongWith(intake.setVoltage(12)); 
 }
   private Command intakeCommand() {
-    return shooter.setVoltage(-5).alongWith(intake.setVoltage(-12));
+    return shooter.setVoltage(-8).alongWith(intake.setVoltage(-6));
 
   }
   
