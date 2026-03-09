@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,7 +18,6 @@ import frc.robot.Subsystems.shooter.Shooter;
 import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
-import java.util.jar.Attributes.Name;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -36,14 +34,13 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
 
-
   // Controllers
   final CommandXboxController driverXbox = new CommandXboxController(0);
- 
 
   // Subsystems
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
-  
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(
+      new File(Filesystem.getDeployDirectory(), "swerve/neo"));
+
   private final Climb climb = new Climb();
   private final Shooter shooter = new Shooter();
   private final Intake intake = new Intake();
@@ -53,7 +50,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
+    NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
@@ -90,24 +87,21 @@ NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
   }
 
   private Command climbDownCommand() {
-    return climb.setVoltage(-6); 
+    return climb.setVoltage(-6);
   }
 
-  private Command
-   shootCommand() {
-  return shooter.setVoltage(-12).alongWith(intake.setVoltage(12)); 
-}
+  private Command shootCommand() {
+    return shooter.setVoltage(-8).alongWith(intake.setVoltage(8));
+  }
+
   private Command intakeCommand() {
-    return shooter.setVoltage(-8).alongWith(intake.setVoltage(-6));
+    return shooter.setVoltage(-8).alongWith(intake.setVoltage(6));
 
   }
-  
 
   private Command ejectCommand() {
     return shooter.setVoltage(-7.9).alongWith(intake.setVoltage(12));
   }
-
-
 
   public Command getAutonomousCommand() {
     return drivebase.getAutonomousCommand("New New Auto");
