@@ -69,6 +69,8 @@ public class RobotContainer {
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true)));
 
+    shooter.setDefaultCommand(shooter.runOnce(() -> shooter.stop()));
+
     // Gyro reset
     driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
 
@@ -90,19 +92,20 @@ public class RobotContainer {
     return climb.setVoltage(-6);
   }
 
-private Command shootCommand() {
-    return shooter.setVoltage(-10).alongWith(
-        Commands.waitSeconds(1.2).andThen(intake.setVoltage(10))
-    );
-}
+  private Command shootCommand() {
+    double targetSpeed = 80;
+
+    return shooter.runShooterVelocity(targetSpeed).alongWith(
+        Commands.waitSeconds(1.2).andThen(intake.setVoltage(10)));
+  }
 
   private Command intakeCommand() {
-    return shooter.setVoltage(-4).alongWith(intake.setVoltage(-8));
+    return shooter.setVoltage(4).alongWith(intake.setVoltage(-8));
 
   }
 
   private Command ejectCommand() {
-    return shooter.setVoltage(5).alongWith(intake.setVoltage(6));
+    return shooter.setVoltage(-5).alongWith(intake.setVoltage(6));
   }
 
   public Command getAutonomousCommand() {
