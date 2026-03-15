@@ -95,10 +95,12 @@ public class RobotContainer {
   }
 
   private Command shootCommand() {
-    double targetSpeed = 80;
+double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 94);
 
-    return shooter.runShooterVelocity(targetSpeed).alongWith(
-        Commands.waitSeconds(1.2).andThen(intake.setVoltage(10)));
+return shooter.runShooterVelocity(targetSpeed).alongWith(
+    Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5) // מחכה עד שהמהירות קרובה ליעד
+    .andThen(intake.setVoltage(10.1))
+);
   }
 
   private Command intakeCommand() {

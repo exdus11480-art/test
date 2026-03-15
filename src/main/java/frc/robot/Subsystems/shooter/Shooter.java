@@ -44,4 +44,14 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter/Target RPS", m_targetRPS);
         SmartDashboard.putNumber("Shooter/Velocity Error", m_targetRPS - shooterMotor.getVelocity().getValueAsDouble());
     }
+
+
+    // פונקציה שמחזירה את המהירות הנוכחית ב-RPS
+public double getActualVelocity() {
+    // אם את משתמשת ב-TalonFX (Phoenix 6):
+    return shooterMotor.getVelocity().getValueAsDouble();
 }
+
+}
+
+

@@ -14,8 +14,8 @@ public class ShooterConfigs {
 
     public static final Slot0Configs shooterVelocityGains = new Slot0Configs()
             .withKS(0.1)
-            .withKV(0.12)
-            .withKP(0.42) 
+            .withKV(0.11)
+            .withKP(0.4) 
             .withKI(0.0)
             .withKD(0.01);
 
@@ -25,7 +25,7 @@ public class ShooterConfigs {
                     .withInverted(InvertedValue.CounterClockwise_Positive)
                     .withNeutralMode(NeutralModeValue.Coast))
             .withCurrentLimits(new CurrentLimitsConfigs()
-                    .withSupplyCurrentLimit(65)
+                    .withSupplyCurrentLimit(50)
                     .withSupplyCurrentLimitEnable(true)
                     .withStatorCurrentLimit(85)
                     .withStatorCurrentLimitEnable(true))
