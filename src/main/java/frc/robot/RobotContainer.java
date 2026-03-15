@@ -82,6 +82,8 @@ public class RobotContainer {
     driverXbox.rightTrigger().whileTrue(shootCommand());
     driverXbox.leftTrigger().whileTrue(intakeCommand());
     driverXbox.rightBumper().whileTrue(ejectCommand());
+
+    driverXbox.b().whileTrue((aa()));
   }
 
   private Command climbUpCommand() {
@@ -106,6 +108,9 @@ public class RobotContainer {
 
   private Command ejectCommand() {
     return shooter.setVoltage(-5).alongWith(intake.setVoltage(6));
+  }
+  private Command aa() {
+    return shooter.setVoltage(12);
   }
 
   public Command getAutonomousCommand() {
