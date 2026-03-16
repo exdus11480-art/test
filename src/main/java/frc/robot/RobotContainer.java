@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Subsystems.autoAim.autoAim;
 import frc.robot.Subsystems.climb.Climb;
 import frc.robot.Subsystems.intake.Intake;
 import frc.robot.Subsystems.shooter.Shooter;
@@ -40,6 +41,8 @@ public class RobotContainer {
   // Subsystems
   private final SwerveSubsystem drivebase = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/neo"));
+
+private final autoAim autoAimSubsystem = new autoAim(drivebase);
 
   private final Climb climb = new Climb();
   private final Shooter shooter = new Shooter();
@@ -83,7 +86,7 @@ public class RobotContainer {
     driverXbox.leftTrigger().whileTrue(intakeCommand());
     driverXbox.rightBumper().whileTrue(ejectCommand());
 
-    driverXbox.b().whileTrue((aa()));
+    driverXbox.b().whileTrue((alignToAngle()));
   }
 
   private Command climbUpCommand() {
@@ -111,8 +114,8 @@ return shooter.runShooterVelocity(targetSpeed).alongWith(
   private Command ejectCommand() {
     return shooter.setVoltage(-5).alongWith(intake.setVoltage(6));
   }
-  private Command aa() {
-    return shooter.setVoltage(12);
+  private Command alignToAngle() {
+    return autoAimSubsystem.alignToAngle(157); // Example angle, replace with actual desired angle
   }
 
   public Command getAutonomousCommand() {
