@@ -102,17 +102,17 @@ double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 94);
 
 return shooter.runShooterVelocity(targetSpeed).alongWith(
     Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5) // מחכה עד שהמהירות קרובה ליעד
-    .andThen(intake.setVoltage(10.1))
-);
+    .andThen(intake.runFullIntake(10.1, -8))
+    );
+
   }
 
   private Command intakeCommand() {
-    return shooter.setVoltage(4).alongWith(intake.setVoltage(-8));
-
+    return shooter.setVoltage(4).alongWith(intake.runFullIntake(-8, 10.1));
   }
 
   private Command ejectCommand() {
-    return shooter.setVoltage(-5).alongWith(intake.setVoltage(6));
+    return shooter.setVoltage(-5).alongWith(intake.runFullIntake(6, -8));
   }
   private Command alignToAngle() {
     return autoAimSubsystem.alignToAngle(157); // Example angle, replace with actual desired angle

@@ -22,14 +22,17 @@ public class Intake extends SubsystemBase {
                 IntakeConfigs.intakeConfigs, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
+public Command runFullIntake(double intakeVolts, double feederVolts) {
+    return runEnd(
+        () -> {
+            intakeMotor.setVoltage(intakeVolts);
+            feederRoller.setVoltage(feederVolts);
+        },
+        () -> {
+            intakeMotor.setVoltage(0);
+            feederRoller.setVoltage(0);
+        }
+    );
+}
 
-    public Command setVoltage(double voltage) {
-        return startEnd(
-                () -> intakeMotor.setVoltage(voltage),
-                () -> intakeMotor.setVoltage(0));
-    }
-
-    public Command setVoltagefeeder(double voltage) {
-        return runEnd(() -> feederRoller.setVoltage(voltage), () -> feederRoller.setVoltage(0));
-    }
 }
