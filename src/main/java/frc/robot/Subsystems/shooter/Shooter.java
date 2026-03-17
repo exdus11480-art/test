@@ -46,9 +46,7 @@ public class Shooter extends SubsystemBase {
     }
 
 
-    // פונקציה שמחזירה את המהירות הנוכחית ב-RPS
 public double getActualVelocity() {
-    // אם את משתמשת ב-TalonFX (Phoenix 6):
     return shooterMotor.getVelocity().getValueAsDouble();
 }
 
