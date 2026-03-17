@@ -21,5 +21,9 @@ double tync = LimelightHelpers.getTYNC("");  // Vertical offset from principal p
 LimelightHelpers.setPipelineIndex("", 0);
     }
 
+public void periodic() {
+    // This method will be called once per scheduler run
+
+}
 
 }
