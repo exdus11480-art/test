@@ -17,7 +17,7 @@ public class Intake extends SubsystemBase {
         intakeMotor = new TalonFX(IntakeConfigs.intakeMotorID);
         intakeMotor.getConfigurator().apply(IntakeConfigs.intakeMotorConfig);
         
-        feederRoller = new SparkMax(IntakeConfigs.feederMotorID, SparkLowLevel.MotorType.kBrushed);
+        feederRoller = new SparkMax(IntakeConfigs.feederMotorID, SparkLowLevel.MotorType.kBrushless);
         feederRoller.configure(
                 IntakeConfigs.intakeConfigs, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

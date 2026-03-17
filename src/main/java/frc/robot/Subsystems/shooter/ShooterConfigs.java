@@ -15,15 +15,15 @@ public class ShooterConfigs {
     public static final Slot0Configs shooterVelocityGains = new Slot0Configs()
             .withKS(0.1)
             .withKV(0.11)
-            .withKP(0.4) 
+            .withKP(0.11) 
             .withKI(0.0)
             .withKD(0.01);
 
     public static final TalonFXConfiguration shooterMotorConfig = new TalonFXConfiguration()
             .withSlot0(shooterVelocityGains)
             .withMotorOutput(new MotorOutputConfigs()
-                    .withInverted(InvertedValue.CounterClockwise_Positive)
-                    .withNeutralMode(NeutralModeValue.Coast))
+                    .withInverted(InvertedValue.Clockwise_Positive)
+                    .withNeutralMode(NeutralModeValue.Brake))
             .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimit(50)
                     .withSupplyCurrentLimitEnable(true)

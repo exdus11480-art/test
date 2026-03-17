@@ -98,21 +98,21 @@ private final autoAim autoAimSubsystem = new autoAim(drivebase);
   }
 
   private Command shootCommand() {
-double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 94);
+double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 80);
 
 return shooter.runShooterVelocity(targetSpeed).alongWith(
-    Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5) // מחכה עד שהמהירות קרובה ליעד
-    .andThen(intake.runFullIntake(10.1, -8))
+    Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5) 
+    .andThen(intake.runFullIntake(4, 8))
     );
 
   }
 
   private Command intakeCommand() {
-    return shooter.setVoltage(4).alongWith(intake.runFullIntake(-8, 10.1));
+    return intake.runFullIntake(8, -10.1);
   }
 
   private Command ejectCommand() {
-    return shooter.setVoltage(-5).alongWith(intake.runFullIntake(6, -8));
+    return intake.runFullIntake(-6, 7);
   }
   private Command alignToAngle() {
     return autoAimSubsystem.alignToAngle(157); // Example angle, replace with actual desired angle
