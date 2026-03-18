@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Subsystems.autoAim.autoAim;
@@ -39,7 +40,7 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
 
   // Subsystems
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(
+  public final SwerveSubsystem drivebase = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/neo"));
 
 private final autoAim autoAimSubsystem = new autoAim(drivebase);
@@ -72,6 +73,12 @@ private final autoAim autoAimSubsystem = new autoAim(drivebase);
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true)));
 
+driverXbox.leftBumper()
+.whileTrue(new  RunCommand(null, null)
+
+
+
+
     shooter.setDefaultCommand(shooter.runOnce(() -> shooter.stop()));
 
     // Gyro reset
@@ -102,7 +109,7 @@ double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 80);
 
 return shooter.runShooterVelocity(targetSpeed).alongWith(
     Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5) 
-    .andThen(intake.runFullIntake(4, 8))
+    .andThen(intake.runFullIntake(8.2, 8))
     );
 
   }
@@ -112,7 +119,7 @@ return shooter.runShooterVelocity(targetSpeed).alongWith(
   }
 
   private Command ejectCommand() {
-    return intake.runFullIntake(-6, 7);
+    return intake.runFullIntake(-7, 7);
   }
   private Command alignToAngle() {
     return autoAimSubsystem.alignToAngle(157); // Example angle, replace with actual desired angle

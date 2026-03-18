@@ -9,13 +9,15 @@ import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 
 public class autoAim extends SubsystemBase {
   
-private final PIDController turnController = new PIDController(0.1, 0.0, 0.01);
+private final PIDController turnController = new PIDController(0.08, 0.0, 0.0);
 
-private final SwerveSubsystem swerve;
+private final SwerveSubsystem swerve; 
 
     public autoAim(SwerveSubsystem swerve) {
         // Initialize any necessary components here
         this.swerve = swerve;
+        turnController.setTolerance(2.0);
+        turnController.enableContinuousInput(-180, 180);
     }
 
 
