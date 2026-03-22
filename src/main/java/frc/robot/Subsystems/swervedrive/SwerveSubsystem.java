@@ -103,6 +103,7 @@ public class SwerveSubsystem extends SubsystemBase {
         new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
             Rotation2d.fromDegrees(0)));
   }
+  
   private final Field2d field2d = new Field2d();
 
   @Override

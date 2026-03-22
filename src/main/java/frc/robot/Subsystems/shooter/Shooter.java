@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -23,14 +24,13 @@ public class Shooter extends SubsystemBase {
         });
     }
 
-    public Command setVoltage(double voltage) {
-        return startEnd(
-            () -> {
-                m_targetRPS = 0;
-                shooterMotor.setVoltage(voltage);
-            },
-            () -> shooterMotor.setVoltage(0)
-        );
+
+
+
+    public Command activateShooter(double distance) {
+    double RPS = SmartDashboard.getNumber("Shooter Speed", distance * 10); // Example: Speed increases with distance
+
+    return runShooterVelocity(RPS);
     }
 
     public void stop() {
