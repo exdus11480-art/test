@@ -6,35 +6,27 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Subsystems.autoAim.autoAim;
 import frc.robot.Subsystems.climb.Climb;
 import frc.robot.Subsystems.intake.Intake;
 import frc.robot.Subsystems.shooter.Shooter;
 import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.Vision.LimelightHelpers;
 
-import java.io.Console;
+
 import java.io.File;
-
-import org.opencv.core.Mat;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
 import swervelib.SwerveInputStream;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -60,9 +52,10 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Intake intake = new Intake();
 
-  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();  
 
   public RobotContainer() {
+    
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
@@ -77,8 +70,8 @@ public class RobotContainer {
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () -> -driverXbox.getLeftX(),
-                () -> -driverXbox.getLeftY())
+                () -> driverXbox.getLeftY(),
+                () -> -driverXbox.getLeftX())
                 .withControllerRotationAxis(() -> -driverXbox.getRightX())
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
@@ -97,53 +90,45 @@ public class RobotContainer {
     driverXbox.rightTrigger().whileTrue(shootCommand());
     driverXbox.leftTrigger().whileTrue(intakeCommand());
     driverXbox.rightBumper().whileTrue(ejectCommand());
-    driverXbox.leftBumper().whileTrue(driveAndAim());
-    driverXbox.b().whileTrue((alignToAngle()));
+    driverXbox.b().whileTrue(driveAndAim());
+    
   }
 
-  public double[] getDistanceAndAngleToPoint(double targetX, double targetY) {
-    Pose2d robotPose = drivebase.getPose(); 
-    System.out.println("robot: " + robotPose.getRotation());
-    
-    Translation2d targetLocation = new Translation2d(targetX, targetY);
-    Translation2d robotLocation = robotPose.getTranslation();
-    
-    Translation2d relativeVector = targetLocation.minus(robotLocation);
 
-    double distance = relativeVector.getNorm();
-    Rotation2d targetAngle = new Rotation2d(relativeVector.getX(), relativeVector.getY()).minus(robotPose.getRotation());
-    System.out.println("target: " + targetAngle.getDegrees());
 
-    // החזרת התוצאות
-    return new double[] { 
-        distance, 
-        targetAngle.getDegrees() };
-    }
+private Command driveAndAim() {
 
-  private Command driveAndAim() {
-      return Commands.run(() -> {
-            double angle = getDistanceAndAngleToPoint(163, 160)[1];
-            double normalizedAngle = MathUtil.inputModulus(angle, 0, 360);
+    return Commands.run(() -> {
 
-            if(Math.abs(angle) < 10)
-            {
-              angle = 0;
-            }
-            else
-            {
-              if(Math.abs(normalizedAngle) > 30)
-                  normalizedAngle = 0.5;
-              else
-                  normalizedAngle = normalizedAngle/30/2;
-            }
-            System.out.println(normalizedAngle);
-        drivebase.drive(new Translation2d(driverXbox.getLeftY(), driverXbox.getLeftX()), normalizedAngle, true);
-      });
-  }
+        double targetX_meters = Units.inchesToMeters(492.88);
+        double targetY_meters = Units.inchesToMeters(158.84);
+        
+        double[] targetData = autoAimSubsystem.getDistanceAndAngleToPoint(targetX_meters, targetY_meters);
+        double targetAngle = targetData[1];
+        
+        // 2. חישוב מהירות סיבוב דרך הסאב-סיסטם
+        double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(targetAngle);
+        
+        // 3. לוגיקת עצירה/הגבלה
+        if (autoAimSubsystem.isAtTarget()) {
+            rotationSpeed = 0;
+        } else {
+            rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
+        }
+System.out.println("Target: " + Math.toDegrees(targetAngle) + 
+                           " | Current: " + drivebase.getPose().getRotation().getDegrees() + 
+                           " | Speed: " + rotationSpeed);
+        // 4. נסיעה
+        double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);
+        double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);  
+        
+        drivebase.drive(new Translation2d(xTranslation, yTranslation), rotationSpeed, true);
+    }, drivebase, autoAimSubsystem); // חשוב להוסיף את autoAimSubsystem כדרישה (Requirement)
 
+   }
   private Command climbUpCommand() {
     return climb.setVoltage(6);
-    
+
   }
 
   private Command climbDownCommand() {
@@ -151,7 +136,7 @@ public class RobotContainer {
   }
 
   private Command shootCommand() {
-    double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 80 );
+    double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 80);
 
     return shooter.runShooterVelocity(targetSpeed).alongWith(
         Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5)
@@ -165,10 +150,6 @@ public class RobotContainer {
 
   private Command ejectCommand() {
     return intake.runFullIntake(-7, 7);
-  }
-
-  private Command alignToAngle() {
-    return autoAimSubsystem.alignToAngle(157); // Example angle, replace with actual desired angle
   }
 
   public Command getAutonomousCommand() {
