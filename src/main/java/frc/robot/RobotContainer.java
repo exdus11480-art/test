@@ -15,6 +15,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Subsystems.ExternalIntake.ExternalIntake;
 import frc.robot.Subsystems.autoAim.autoAim;
 import frc.robot.Subsystems.climb.Climb;
 import frc.robot.Subsystems.intake.Intake;
@@ -51,6 +52,7 @@ public class RobotContainer {
   private final Climb climb = new Climb();
   private final Shooter shooter = new Shooter();
   private final Intake intake = new Intake();
+private final ExternalIntake externalIntake = new ExternalIntake();
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();  
 
@@ -92,6 +94,7 @@ public class RobotContainer {
     driverXbox.rightBumper().whileTrue(ejectCommand());
     driverXbox.leftBumper().whileTrue(driveAndAim());
     
+    driverXbox.y().whileTrue(open());
   }
 
 
@@ -125,6 +128,10 @@ private Command driveAndAim() {
   private Command climbDownCommand() {
     return climb.setVoltage(-6);
   }
+
+private Command open() {
+    return externalIntake.intakeProperty(8);
+}
 
   private Command shootCommand() {
     double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 80);
