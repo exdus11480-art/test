@@ -70,8 +70,8 @@ public class RobotContainer {
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () -> driverXbox.getLeftY(),
-                () -> -driverXbox.getLeftX())
+                () -> driverXbox.getLeftX(),
+                () -> -driverXbox.getLeftY())
                 .withControllerRotationAxis(() -> -driverXbox.getRightX())
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
@@ -90,7 +90,7 @@ public class RobotContainer {
     driverXbox.rightTrigger().whileTrue(shootCommand());
     driverXbox.leftTrigger().whileTrue(intakeCommand());
     driverXbox.rightBumper().whileTrue(ejectCommand());
-    driverXbox.b().whileTrue(driveAndAim());
+    driverXbox.leftBumper().whileTrue(driveAndAim());
     
   }
 
@@ -105,22 +105,13 @@ private Command driveAndAim() {
         
         double[] targetData = autoAimSubsystem.getDistanceAndAngleToPoint(targetX_meters, targetY_meters);
         double targetAngle = targetData[1];
-        
+
         // 2. חישוב מהירות סיבוב דרך הסאב-סיסטם
         double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(targetAngle);
         
-        // 3. לוגיקת עצירה/הגבלה
-        if (autoAimSubsystem.isAtTarget()) {
-            rotationSpeed = 0;
-        } else {
-            rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
-        }
-System.out.println("Target: " + Math.toDegrees(targetAngle) + 
-                           " | Current: " + drivebase.getPose().getRotation().getDegrees() + 
-                           " | Speed: " + rotationSpeed);
         // 4. נסיעה
-        double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);
-        double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);  
+        double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);
+        double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);  
         
         drivebase.drive(new Translation2d(xTranslation, yTranslation), rotationSpeed, true);
     }, drivebase, autoAimSubsystem); // חשוב להוסיף את autoAimSubsystem כדרישה (Requirement)

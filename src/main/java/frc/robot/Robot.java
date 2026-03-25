@@ -83,11 +83,14 @@ public class Robot extends TimedRobot {
     var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
     if (llMeasurement != null && llMeasurement.tagCount > 0) {
+      var pose = llMeasurement.pose;
+      if (pose.getRotation().getCos() != 0 || pose.getRotation().getSin() != 0){
         m_robotContainer.drivebase.getSwerveDrive().addVisionMeasurement(
             llMeasurement.pose, 
             llMeasurement.timestampSeconds
         );
     }
+  }
   }
 
   

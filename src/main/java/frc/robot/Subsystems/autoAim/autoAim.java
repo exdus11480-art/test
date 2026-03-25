@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.autoAim;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,7 +11,7 @@ import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 
 public class autoAim extends SubsystemBase {
 
-    private final PIDController turnController = new PIDController(1.5, 0.0, 0.05);
+    private final PIDController turnController = new PIDController(0.35, 0.0, 0.0);
 
     private final SwerveSubsystem swerve;
 
@@ -24,7 +25,10 @@ public class autoAim extends SubsystemBase {
 
     public double calculateRotationSpeed(double targetAngle) {
         double currentAngle = swerve.getPose().getRotation().getRadians();
-        return turnController.calculate(currentAngle, targetAngle);
+                System.out.println("targetAngle = " + targetAngle);
+                System.out.println("currentAngle = " + currentAngle);
+        double output = - turnController.calculate(currentAngle, targetAngle);
+        return MathUtil.clamp(output, -0.5, 0.5);
     }
 
     public double[] getDistanceAndAngleToPoint(double targetX, double targetY) {

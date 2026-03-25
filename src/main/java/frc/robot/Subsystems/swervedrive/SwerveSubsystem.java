@@ -258,7 +258,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     swerveDrive.drive(translation,
-        rotation,
+        rotation * swerveDrive.getMaximumChassisAngularVelocity(),
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.
   }
