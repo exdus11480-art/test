@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -82,7 +81,7 @@ public class RobotContainer {
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true)));
 
-    shooter.setDefaultCommand(shooter.runOnce(() -> shooter.stop()));
+    shooter.setDefaultCommand(shooter.run(shooter::stop));
 
     // Gyro reset
     driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
@@ -114,8 +113,7 @@ public class RobotContainer {
       double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);
 
       drivebase.drive(new Translation2d(xTranslation, yTranslation), rotationSpeed, true);
-    }, drivebase, autoAimSubsystem); // חשוב להוסיף את autoAimSubsystem כדרישה (Requirement)
-
+    }, drivebase, autoAimSubsystem); 
   }
 
   private Command climbUpCommand() {
@@ -140,13 +138,13 @@ public class RobotContainer {
   }
 
   private Command shootCommand() {
-      
-      double targetSpeed = shooter.activateShooter();
-      
-      return shooter.runShooterVelocity(targetSpeed).alongWith(
-          Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 2)
-              .andThen(intake.runFullIntake(8.2, 8)));
-
+          return shooter.runShooterVelocity(shooter::activateShooter).alongWith(
+        Commands.waitUntil(() -> {
+            double currentTarget = shooter.activateShooter();
+            return shooter.getActualVelocity() >= currentTarget - 2;
+        })
+        .andThen(intake.runFullIntake(8.2, 8))
+    );
   }
 
   // private Command shootCommand2() {

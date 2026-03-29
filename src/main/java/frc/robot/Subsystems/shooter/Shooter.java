@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.shooter;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -18,14 +20,16 @@ public class Shooter extends SubsystemBase {
     private double m_targetRPS = 0;
     double targetX_meters = Units.inchesToMeters(492.88);
     double targetY_meters = Units.inchesToMeters(158.84);
+
     public Shooter(autoAim autoAimSubsystem) {
         this.autoAimSubsystem = autoAimSubsystem;
         shooterMotor = new TalonFX(ShooterConfigs.shooterMotorID);
         shooterMotor.getConfigurator().apply(ShooterConfigs.shooterMotorConfig);
     }
 
-    public Command runShooterVelocity(double velocityRPS) {
+    public Command runShooterVelocity(DoubleSupplier velocityRPSSupplier) {
         return run(() -> {
+            double velocityRPS = velocityRPSSupplier.getAsDouble(); 
             m_targetRPS = velocityRPS;
             shooterMotor.setControl(m_velocityRequest.withVelocity(velocityRPS));
         });
@@ -34,10 +38,10 @@ public class Shooter extends SubsystemBase {
     public double activateShooter() {
 
         double[] targetData = autoAimSubsystem.getDistanceAndAngleToPoint(targetX_meters, targetY_meters);
+        
         double distance = targetData[0];
-        double RPS = SmartDashboard.getNumber("Shooter Speed", 7.55 + distance + 42.86); // Example: Speed increases
-                                                                                         // with distance
-
+        double RPS =  7.55 + distance + 42.86;
+        SmartDashboard.putNumber("Shooter speed", RPS);
         return RPS;
     }
 
