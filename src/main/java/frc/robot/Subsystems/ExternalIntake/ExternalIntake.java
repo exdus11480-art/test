@@ -9,7 +9,6 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-
 public class ExternalIntake extends SubsystemBase {
     private final TalonFX intakeExternalMotor;
     private final SparkMax openingMotor;
@@ -17,20 +16,22 @@ public class ExternalIntake extends SubsystemBase {
     public ExternalIntake() {
         intakeExternalMotor = new TalonFX(ExternalIntakeConfigs.intakeExternalMotorID);
         intakeExternalMotor.getConfigurator().apply(ExternalIntakeConfigs.intakeExternalMotorConfig);
-        
+
         openingMotor = new SparkMax(ExternalIntakeConfigs.openingMotorID, SparkLowLevel.MotorType.kBrushless);
         openingMotor.configure(
                 ExternalIntakeConfigs.openingConfigs, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
+
     
-public Command intakeProperty(double openingMotorVolts) {
-    return runEnd(
-        () -> {
-            openingMotor.setVoltage(openingMotorVolts);
-        },
-        () -> {
-            openingMotor.setVoltage(0);
-        }
-    );
-}
+    public Command intakeProperty(double openingMotorVolts, double ExternalintakeVolts) {
+        return runEnd(
+                () -> {
+                    intakeExternalMotor.setVoltage(ExternalintakeVolts);
+                    openingMotor.setVoltage(openingMotorVolts);
+                },
+                () -> {
+                    intakeExternalMotor.setVoltage(0);
+                    openingMotor.setVoltage(0);
+                });
+    }
 }

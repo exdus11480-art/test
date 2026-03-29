@@ -11,7 +11,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class ExternalIntakeConfigs {
 
-    static final int intakeExternalMotorID = 4;
+    static final int intakeExternalMotorID = 31;
     static final int openingMotorID = 20;
     
     static final int openingMotorCurrentLimit = 30;

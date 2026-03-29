@@ -15,7 +15,7 @@ public class ShooterConfigs {
     public static final Slot0Configs shooterVelocityGains = new Slot0Configs()
             .withKS(0.1)
             .withKV(0.11)
-            .withKP(0.25) 
+            .withKP(0.28) 
             .withKI(0.0)
             .withKD(0.0);
 

@@ -10,18 +10,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Subsystems.ExternalIntake.ExternalIntake;
+
 import frc.robot.Subsystems.autoAim.autoAim;
 import frc.robot.Subsystems.climb.Climb;
 import frc.robot.Subsystems.intake.Intake;
 import frc.robot.Subsystems.shooter.Shooter;
 import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
-
 
 import java.io.File;
 
@@ -39,7 +40,8 @@ import swervelib.SwerveInputStream;
  */
 
 public class RobotContainer {
-
+        double targetX_meters = Units.inchesToMeters(492.88);
+      double targetY_meters = Units.inchesToMeters(158.84);
   // Controllers
   final CommandXboxController driverXbox = new CommandXboxController(0);
 
@@ -50,17 +52,18 @@ public class RobotContainer {
   private final autoAim autoAimSubsystem = new autoAim(drivebase);
 
   private final Climb climb = new Climb();
-  private final Shooter shooter = new Shooter();
+  private final Shooter shooter = new Shooter(autoAimSubsystem);
   private final Intake intake = new Intake();
-private final ExternalIntake externalIntake = new ExternalIntake();
+  private final ExternalIntake externalIntake = new ExternalIntake();
 
-  private final SendableChooser<Command> autoChooser = new SendableChooser<>();  
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   public RobotContainer() {
-    
+
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
+    NamedCommands.registerCommand("gyro", Commands.runOnce(() -> drivebase.zeroGyro()));
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
@@ -72,9 +75,9 @@ private final ExternalIntake externalIntake = new ExternalIntake();
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () -> driverXbox.getLeftX(),
-                () -> -driverXbox.getLeftY())
-                .withControllerRotationAxis(() -> -driverXbox.getRightX())
+                () -> driverXbox.getLeftY(),
+                () -> driverXbox.getLeftX())
+                .withControllerRotationAxis(() -> driverXbox.getRightX())
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true)));
@@ -90,36 +93,31 @@ private final ExternalIntake externalIntake = new ExternalIntake();
 
     // Shooter, Intake and Eject
     driverXbox.rightTrigger().whileTrue(shootCommand());
-    driverXbox.leftTrigger().whileTrue(intakeCommand());
+    driverXbox.leftTrigger().whileTrue(intakeCommand().alongWith(open()));
     driverXbox.rightBumper().whileTrue(ejectCommand());
     driverXbox.leftBumper().whileTrue(driveAndAim());
-    
-    driverXbox.y().whileTrue(open());
+
+    driverXbox.y().whileTrue(activateExternalIntake());
+    driverXbox.x().whileTrue(close());
   }
 
-
-
-private Command driveAndAim() {
+  private Command driveAndAim() {
 
     return Commands.run(() -> {
 
-        double targetX_meters = Units.inchesToMeters(492.88);
-        double targetY_meters = Units.inchesToMeters(158.84);
-        
-        double[] targetData = autoAimSubsystem.getDistanceAndAngleToPoint(targetX_meters, targetY_meters);
-        double targetAngle = targetData[1];
+      double[] targetData = autoAimSubsystem.getDistanceAndAngleToPoint(targetX_meters, targetY_meters);
+      double targetAngle = targetData[1];
 
-        // 2. חישוב מהירות סיבוב דרך הסאב-סיסטם
-        double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(targetAngle);
-        
-        // 4. נסיעה
-        double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);
-        double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);  
-        
-        drivebase.drive(new Translation2d(xTranslation, yTranslation), rotationSpeed, true);
+      double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(targetAngle);
+      // 4. נסיעה
+      double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);
+      double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);
+
+      drivebase.drive(new Translation2d(xTranslation, yTranslation), rotationSpeed, true);
     }, drivebase, autoAimSubsystem); // חשוב להוסיף את autoAimSubsystem כדרישה (Requirement)
 
-   }
+  }
+
   private Command climbUpCommand() {
     return climb.setVoltage(6);
 
@@ -129,25 +127,43 @@ private Command driveAndAim() {
     return climb.setVoltage(-6);
   }
 
-private Command open() {
-    return externalIntake.intakeProperty(8);
-}
+  private Command open() {
+    return externalIntake.intakeProperty(0, -3);
+  }
+
+  private Command activateExternalIntake() {
+    return externalIntake.intakeProperty(2, -3);
+  }
+
+  private Command close() {
+    return externalIntake.intakeProperty(-1, 0);// קוראים לזה עבודה ערבית של העבודה הערבית-+
+  }
 
   private Command shootCommand() {
-    double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 80);
-
-    return shooter.runShooterVelocity(targetSpeed).alongWith(
-        Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5)
-            .andThen(intake.runFullIntake(8.2, 8)));
+      
+      double targetSpeed = shooter.activateShooter();
+      
+      return shooter.runShooterVelocity(targetSpeed).alongWith(
+          Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 2)
+              .andThen(intake.runFullIntake(8.2, 8)));
 
   }
+
+  // private Command shootCommand2() {
+  // double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 15);
+
+  // return shooter.runShooterVelocity(targetSpeed).alongWith(
+  // Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5)
+  // .andThen(intake.runFullIntake(8.2, 8)));
+
+  // }
 
   private Command intakeCommand() {
     return intake.runFullIntake(8, -10.1);
   }
 
   private Command ejectCommand() {
-    return intake.runFullIntake(-7, 7);
+    return intake.runFullIntake(-3, 3);
   }
 
   public Command getAutonomousCommand() {
