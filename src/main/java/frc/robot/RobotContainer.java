@@ -98,6 +98,7 @@ public class RobotContainer {
 
     driverXbox.y().whileTrue(activateExternalIntake());
     driverXbox.x().whileTrue(close());
+
   }
 
   private Command driveAndAim() {
@@ -138,14 +139,17 @@ public class RobotContainer {
   }
 
   private Command shootCommand() {
-          return shooter.runShooterVelocity(shooter::activateShooter).alongWith(
-        Commands.waitUntil(() -> {
-            double currentTarget = shooter.activateShooter();
-            return shooter.getActualVelocity() >= currentTarget - 2;
-        })
-        .andThen(intake.runFullIntake(8.2, 8))
-    );
+return shooter.runShooterVelocity(() -> shooter.activateShooter())
+        .alongWith(
+            Commands.waitUntil(() -> {
+                double currentTarget = shooter.activateShooter();
+                return shooter.getActualVelocity() >= currentTarget - 2;
+            })
+            .andThen(intake.runFullIntake(8.2, 8))
+        );
   }
+  // בתוך configureBindings ב-RobotContainer.java
+
 
   // private Command shootCommand2() {
   // double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 15);

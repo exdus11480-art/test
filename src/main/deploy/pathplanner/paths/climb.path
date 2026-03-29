@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 1.2515476190476198,
+        "y": 3.6786785714285717
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 0.9468783790014405,
+        "y": 3.7015136647897546
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "climb"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 0.9816071428571436,
+        "y": 3.6786785714285717
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 1.3013962124869767,
+        "y": 3.6369658629090815
       },
       "nextControl": null,
       "isLocked": false,
