@@ -148,17 +148,6 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
             .andThen(intake.runFullIntake(8.2, 8))
         );
   }
-  // בתוך configureBindings ב-RobotContainer.java
-
-
-  // private Command shootCommand2() {
-  // double targetSpeed = SmartDashboard.getNumber("Shooter Speed", 15);
-
-  // return shooter.runShooterVelocity(targetSpeed).alongWith(
-  // Commands.waitUntil(() -> shooter.getActualVelocity() >= targetSpeed - 5)
-  // .andThen(intake.runFullIntake(8.2, 8)));
-
-  // }
 
   private Command intakeCommand() {
     return intake.runFullIntake(8, -10.1);
