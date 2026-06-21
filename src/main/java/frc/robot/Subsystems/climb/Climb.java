@@ -9,24 +9,33 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climb extends SubsystemBase {
-    private final TalonFX climbMotor;
-    private final TalonFX followerClimbMotor;
+  private final TalonFX climbMotor;
+  private final TalonFX followerClimbMotor;
 
-    public Climb() {
-        climbMotor = new TalonFX(ClimbConfigs.climbMotorID);
-        followerClimbMotor = new TalonFX(ClimbConfigs.followerClimbMotorID);
+  public Climb() {
+    climbMotor = new TalonFX(ClimbConfigs.climbMotorID);
+    followerClimbMotor = new TalonFX(ClimbConfigs.followerClimbMotorID);
 
-        climbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
-        followerClimbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
-        climbMotor.setPosition(0);
-      followerClimbMotor.setControl(new Follower(climbMotor.getDeviceID(), MotorAlignmentValue.Aligned));
-    }
+    climbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
+    followerClimbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
+    climbMotor.setPosition(0);
+    // followerClimbMotor.setControl(new Follower(climbMotor.getDeviceID(),
+    // MotorAlignmentValue.Aligned));
+  }
 
-    public Command setVoltage(double voltage) {
-        return startEnd(
-                () -> climbMotor.setControl(new VoltageOut(voltage)),
-                () -> climbMotor.setControl(new VoltageOut(0)));
-    }
+  public Command setVoltage(double voltage, int motor) {
 
+if (motor== 0){
+    return startEnd(
+        () -> climbMotor.setControl(new VoltageOut(voltage)),
+        () -> climbMotor.setControl(new VoltageOut(0)));
+  } 
+
+else {
+    return startEnd(
+        () -> followerClimbMotor.setControl(new VoltageOut(voltage)),
+        () -> followerClimbMotor.setControl(new VoltageOut(0)));
+  } 
+  }
 
 }

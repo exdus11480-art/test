@@ -15,7 +15,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Subsystems.ExternalIntake.ExternalIntake;
 
 import frc.robot.Subsystems.autoAim.autoAim;
 import frc.robot.Subsystems.climb.Climb;
@@ -53,7 +52,6 @@ public class RobotContainer {
   private final Climb climb = new Climb();
   private final Shooter shooter = new Shooter(autoAimSubsystem);
   private final Intake intake = new Intake();
-  private final ExternalIntake externalIntake = new ExternalIntake();
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -76,7 +74,7 @@ public class RobotContainer {
             SwerveInputStream.of(drivebase.getSwerveDrive(),
                 () ->  driverXbox.getLeftY(),
                 () ->  driverXbox.getLeftX())
-                .withControllerRotationAxis(() -> driverXbox.getRightX())
+                .withControllerRotationAxis(() -> driverXbox.getRightX() * 0.5)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true)));
@@ -87,17 +85,17 @@ public class RobotContainer {
     driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
 
     // Climb commands
-    driverXbox.pov(0).whileTrue(climbUpCommand());
-    driverXbox.pov(180).whileTrue(climbDownCommand());
+    driverXbox.pov(0).whileTrue(rightclimbUpCommand());
+    driverXbox.pov(180).whileTrue(rightclimbDownCommand());
+    driverXbox.pov(90).whileTrue(leftclimbDownCommand());
+    driverXbox.pov(270).whileTrue(leftclimbUpCommand());
+
 
     // Shooter, Intake and Eject
     driverXbox.rightTrigger().whileTrue(shootCommand());
-    driverXbox.leftTrigger().whileTrue(intakeCommand().alongWith(open()));
     driverXbox.rightBumper().whileTrue(ejectCommand());
     driverXbox.leftBumper().whileTrue(driveAndAim());
 
-    driverXbox.y().whileTrue(activateExternalIntake());
-    driverXbox.x().whileTrue(close());
 
   }
 
@@ -117,25 +115,21 @@ public class RobotContainer {
     }, drivebase, autoAimSubsystem); 
   }
 
-  private Command climbUpCommand() {
-    return climb.setVoltage(6);
+  private Command rightclimbUpCommand() {
+    return climb.setVoltage(3,0);
+  }
+
+  private Command rightclimbDownCommand() {
+    return climb.setVoltage(-2,0);
+  }
+
+    private Command leftclimbUpCommand() {
+    return climb.setVoltage(3,1);
 
   }
 
-  private Command climbDownCommand() {
-    return climb.setVoltage(-6);
-  }
-
-  private Command open() {
-    return externalIntake.intakeProperty(0, -3.5);
-  }
-
-  private Command activateExternalIntake() {
-    return externalIntake.intakeProperty(2, -3);
-  }
-
-  private Command close() {
-    return externalIntake.intakeProperty(-1, 0);// קוראים לזה עבודה ערבית של העבודה הערבית-+
+  private Command leftclimbDownCommand() {
+    return climb.setVoltage(-2,1);
   }
 
   private Command shootCommand() {

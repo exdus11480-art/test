@@ -41,7 +41,6 @@ public class autoAim extends SubsystemBase {
         // חישוב המרחק (Norm נותן את אורך הוקטור)
         double distance = relativeVector.getNorm();
 
-        // חישוב הזווית המוחלטת על המגרש (בלי להחסיר את הזווית הנוכחית של הרובוט!)
         Rotation2d targetAngle = new Rotation2d(relativeVector.getX(), relativeVector.getY());
 
         // החזרת התוצאות
