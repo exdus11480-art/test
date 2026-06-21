@@ -74,8 +74,8 @@ public class RobotContainer {
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () -> driverXbox.getLeftY(),
-                () -> driverXbox.getLeftX())
+                () ->  driverXbox.getLeftY(),
+                () ->  driverXbox.getLeftX())
                 .withControllerRotationAxis(() -> driverXbox.getRightX())
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
@@ -113,7 +113,7 @@ public class RobotContainer {
       double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);
       double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);
 
-      drivebase.drive(new Translation2d(xTranslation, yTranslation), rotationSpeed, true);
+      drivebase.drive(new Translation2d(yTranslation, xTranslation), rotationSpeed, true);
     }, drivebase, autoAimSubsystem); 
   }
 
@@ -127,7 +127,7 @@ public class RobotContainer {
   }
 
   private Command open() {
-    return externalIntake.intakeProperty(0, -3);
+    return externalIntake.intakeProperty(0, -3.5);
   }
 
   private Command activateExternalIntake() {
@@ -165,7 +165,7 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
   }
 
   private Command ejectCommand() {
-    return intake.runFullIntake(-3, 3);
+    return intake.runFullIntake(-5, 5);
   }
 
   public Command getAutonomousCommand() {

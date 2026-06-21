@@ -27,7 +27,7 @@ public class ClimbConfigs {
                  //add software limit switch configuration>
         //      .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
         //      .withForwardSoftLimitEnable(true)
-        //      .withForwardSoftLimitThreshold(65)
+        //      .withForwardSoftLimitThreshold(75)
         //      .withReverseSoftLimitEnable(true)
         //      .withReverseSoftLimitThreshold(0)); 
 
