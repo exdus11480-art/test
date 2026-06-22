@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.OperatorConstants;
 
+
 import frc.robot.Subsystems.autoAim.autoAim;
 import frc.robot.Subsystems.climb.Climb;
 import frc.robot.Subsystems.intake.Intake;
@@ -72,9 +73,9 @@ public class RobotContainer {
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () ->  driverXbox.getLeftY(),
-                () ->  driverXbox.getLeftX())
-                .withControllerRotationAxis(() -> driverXbox.getRightX() * 0.5)
+                () ->  driverXbox.getLeftY() * 0.5,
+                () ->  driverXbox.getLeftX() * 0.5)
+                .withControllerRotationAxis(() -> - driverXbox.getRightX() * 0.5)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true)));
@@ -83,7 +84,7 @@ public class RobotContainer {
 
     // Gyro reset
     driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
-
+    driverXbox.y().whileTrue(shooter.manualShootCommand());
     // Climb commands
     driverXbox.pov(0).whileTrue(rightclimbUpCommand());
     driverXbox.pov(180).whileTrue(rightclimbDownCommand());
@@ -95,8 +96,7 @@ public class RobotContainer {
     driverXbox.rightTrigger().whileTrue(shootCommand());
     driverXbox.rightBumper().whileTrue(ejectCommand());
     driverXbox.leftBumper().whileTrue(driveAndAim());
-
-
+    driverXbox.leftTrigger().whileTrue(intakeCommand());
   }
 
   private Command driveAndAim() {
@@ -119,6 +119,7 @@ public class RobotContainer {
     return climb.setVoltage(3,0);
   }
 
+
   private Command rightclimbDownCommand() {
     return climb.setVoltage(-2,0);
   }
@@ -131,6 +132,8 @@ public class RobotContainer {
   private Command leftclimbDownCommand() {
     return climb.setVoltage(-2,1);
   }
+
+
 
   private Command shootCommand() {
 return shooter.runShooterVelocity(() -> shooter.activateShooter())

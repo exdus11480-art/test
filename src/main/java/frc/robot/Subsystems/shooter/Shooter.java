@@ -20,6 +20,7 @@ public class Shooter extends SubsystemBase {
     private final InterpolatingDoubleTreeMap shotMap = new InterpolatingDoubleTreeMap();
 
     private double m_targetRPS = 0;
+
     double targetX_meters = Units.inchesToMeters(492.88);
     double targetY_meters = Units.inchesToMeters(158.84);
 
