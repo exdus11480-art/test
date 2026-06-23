@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -46,7 +48,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-
+    SignalLogger.stop();
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop
     // immediately when disabled, but then also let it be pushed more
@@ -77,7 +79,6 @@ public class Robot extends TimedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     
-    CommandScheduler.getInstance().run();
 
     // var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
@@ -93,27 +94,22 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().run();
 
-    // 1. לקיחת הזווית מתוך ה-Pose הקיים של הסוורב (במעלות)
     var swerveDrive = m_robotContainer.drivebase.getSwerveDrive();
-    double gyroYaw = swerveDrive.getPose().getRotation().getDegrees();
     
-    // מנסים לקבל את מהירות הסיבוב, אם לא מוצאים - שמים 0 והליימלייט יסתדר
-    double gyroRate = 0.0; 
+    // קריאת הזווית הרגילה של הרובוט (במעלות)
+    double gyroYaw = swerveDrive.getPose().getRotation().getDegrees();
 
-    LimelightHelpers.SetRobotOrientation("limelight", -gyroYaw, gyroRate, 0, 0, 0, 0);
+    // שליחת הזווית המקורית לליימלייט בלי שום קומבינות
+    LimelightHelpers.SetRobotOrientation("limelight", gyroYaw, 0, 0, 0, 0, 0);
 
-    // 3. משיכת המיקום מ-MegaTag2
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
-    boolean doRejectUpdate = (mt2.tagCount == 0);
-
-    if (!doRejectUpdate) {
+    if (mt2.tagCount > 0) {
+        // הזרקה ישירה של ה-Pose כמו שהוא
         swerveDrive.setVisionMeasurementStdDevs(edu.wpi.first.math.VecBuilder.fill(0.7, 0.7, 9999999));
-        
         swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
     }
 }
-  
 
   
 

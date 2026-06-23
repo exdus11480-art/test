@@ -51,7 +51,7 @@ public class autoAim extends SubsystemBase {
 
 @Override
 public void periodic() {
-    double targetX_meters = Units.inchesToMeters(492.88);
+    double targetX_meters = Units.inchesToMeters(469.075);
     double targetY_meters = Units.inchesToMeters(158.84);
     double distance = getDistanceAndAngleToPoint(targetX_meters, targetY_meters)[0];
     

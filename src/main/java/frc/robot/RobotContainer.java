@@ -39,7 +39,7 @@ import swervelib.SwerveInputStream;
  */
 
 public class RobotContainer {
-        double targetX_meters = Units.inchesToMeters(492.88);
+      double targetX_meters = Units.inchesToMeters(469.075);
       double targetY_meters = Units.inchesToMeters(158.84);
   // Controllers
   final CommandXboxController driverXbox = new CommandXboxController(0);
@@ -84,7 +84,15 @@ public class RobotContainer {
 
     // Gyro reset
     driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
-    driverXbox.y().whileTrue(shooter.manualShootCommand());
+
+    driverXbox.y().whileTrue(
+        shooter.manualShootCommand()
+        .alongWith(
+            Commands.waitUntil(() -> shooter.getActualVelocity() >= 50) // תחליף את 20 במהירות היעד הידנית שלך
+            .andThen(intake.runFullIntake(8.2, 8))
+        )
+    );
+
     // Climb commands
     driverXbox.pov(0).whileTrue(rightclimbUpCommand());
     driverXbox.pov(180).whileTrue(rightclimbDownCommand());
@@ -107,11 +115,10 @@ public class RobotContainer {
       double targetAngle = targetData[1];
 
       double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(targetAngle);
-      // 4. נסיעה
       double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);
       double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);
 
-      drivebase.drive(new Translation2d(yTranslation, xTranslation), rotationSpeed, true);
+      drivebase.drive(new Translation2d(- yTranslation, - xTranslation), rotationSpeed, true);
     }, drivebase, autoAimSubsystem); 
   }
 
