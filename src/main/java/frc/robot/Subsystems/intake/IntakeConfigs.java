@@ -9,18 +9,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class IntakeConfigs {
-
-    static final int intakeMotorID = 4;
-    static final int feederMotorID = 18;
-    
+    public static final int intakeMotorID = 4;
+    public static final int feederMotorID = 18;
     static final int feederMotorCurrentLimit = 60;
+    
 
-    static final SparkMaxConfig intakeConfigs =
-            (SparkMaxConfig) new SparkMaxConfig().inverted(false).smartCurrentLimit(feederMotorCurrentLimit);
-
-
-
-    static final TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration()
+    // הגדרות אינטייק (Kraken)
+    public static final TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs()
                     .withInverted(InvertedValue.Clockwise_Positive)
                     .withNeutralMode(NeutralModeValue.Brake))
@@ -33,7 +28,17 @@ public class IntakeConfigs {
                     .withPeakForwardVoltage(12)
                     .withPeakReverseVoltage(-12));
 
+    // הגדרות פידר (NEO)
+    public static final SparkMaxConfig feederMotorConfig = new SparkMaxConfig();
+    
+        static final SparkMaxConfig intakeConfigs =
+                (SparkMaxConfig) new SparkMaxConfig().inverted(false).smartCurrentLimit(feederMotorCurrentLimit);
 
-                    
-} 
+// בתוך IntakeConfigs.java
+static {
+    feederMotorConfig.closedLoop.pid(0.0001, 0.0, 0.0); // הגדרת ה-PID כאן
+    feederMotorConfig.closedLoop.outputRange(-1, 1);    // הגדרת טווח מתח
+}
 
+
+}

@@ -14,10 +14,15 @@ public class ShooterConfigs {
 
     public static final Slot0Configs shooterVelocityGains = new Slot0Configs()
             .withKS(0.1)
-            .withKV(0.11)
-            .withKP(0.21) 
+            .withKV(0.114)
+            .withKP(0.19) 
             .withKI(0.0)
             .withKD(0.025);
+        //                 .withKS(0.1)
+        //     .withKV(0.114)
+        //     .withKP(0.19) 
+        //     .withKI(0.0)
+        //     .withKD(0.025);
 
     public static final TalonFXConfiguration shooterMotorConfig = new TalonFXConfiguration()
             .withSlot0(shooterVelocityGains)

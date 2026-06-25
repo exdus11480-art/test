@@ -28,8 +28,12 @@ public class Shooter extends SubsystemBase {
         this.autoAimSubsystem = autoAimSubsystem;
         shooterMotor = new TalonFX(ShooterConfigs.shooterMotorID);
         shooterMotor.getConfigurator().apply(ShooterConfigs.shooterMotorConfig);
-
-        shotMap.put(1.25, 57.3);
+        
+        shotMap.put(1.2, 53.8);
+        shotMap.put(1.51, 54.25);
+        shotMap.put(2.07, 61.0);
+        shotMap.put(2.07, 61.0);
+        shotMap.put(2.07, 61.0);
         shotMap.put(2.07, 61.0);
 
         SmartDashboard.setDefaultNumber("Shooter/Manual Test RPS", 50.0);
@@ -69,7 +73,9 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter/Actual RPS", shooterMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Shooter/Target RPS", m_targetRPS);
         SmartDashboard.putNumber("Shooter/Velocity Error", m_targetRPS - shooterMotor.getVelocity().getValueAsDouble());
-    }
+        SmartDashboard.putNumber("Shooter/Motor Voltage (V)", shooterMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Shooter/Stator Current (A)", shooterMotor.getStatorCurrent().getValueAsDouble());
+      }
 
     public double getActualVelocity() {
         return shooterMotor.getVelocity().getValueAsDouble();
