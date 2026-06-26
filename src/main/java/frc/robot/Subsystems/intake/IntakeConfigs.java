@@ -10,7 +10,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class IntakeConfigs {
     public static final int intakeMotorID = 4;
-    public static final int feederMotorID = 18;
+//     public static final int feederMotorID = 18;
     static final int feederMotorCurrentLimit = 60;
     
 

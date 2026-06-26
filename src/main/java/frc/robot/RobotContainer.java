@@ -39,8 +39,8 @@ public class RobotContainer {
   double targetY_meters = Units.inchesToMeters(158.84);
 
   // Controllers
-  final CommandXboxController driverXbox = new CommandXboxController(0);
-  final CommandXboxController operatorXbox = new CommandXboxController(1); // שלט שני עבור המפעיל והטסטים
+  final CommandXboxController driverXbox = new CommandXboxController(3);
+  final CommandXboxController operatorXbox = new CommandXboxController(0); // שלט שני עבור המפעיל והטסטים
 
   // Subsystems
   public final SwerveSubsystem drivebase = new SwerveSubsystem(
@@ -49,10 +49,10 @@ public class RobotContainer {
   private final autoAim autoAimSubsystem = new autoAim(drivebase);
   private final Climb climb = new Climb();
   private final Shooter shooter = new Shooter(autoAimSubsystem);
-  private final FeederSubsystem intake = new FeederSubsystem();
-  private final FeederSubsystem feeder = new FeederSubsystem(); // יצירת הפידר לטסט ה-SysID
 
-  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+private final FeederSubsystem feeder = new FeederSubsystem(); // יצירת הפידר לטסט ה-SysID
+
+private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   public RobotContainer() {
     configureBindings();
@@ -90,10 +90,10 @@ public class RobotContainer {
     // );
 
     // Climb commands
-    driverXbox.pov(0).whileTrue(rightclimbUpCommand());
-    driverXbox.pov(180).whileTrue(rightclimbDownCommand());
-    driverXbox.pov(90).whileTrue(leftclimbDownCommand());
-    driverXbox.pov(270).whileTrue(leftclimbUpCommand());
+    // driverXbox.pov(0).whileTrue(rightclimbUpCommand());
+    // driverXbox.pov(180).whileTrue(rightclimbDownCommand());
+    // driverXbox.pov(90).whileTrue(leftclimbDownCommand());
+    // driverXbox.pov(270).whileTrue(leftclimbUpCommand());
 
     // Shooter, Intake and Eject
     // driverXbox.rightTrigger().whileTrue(shootCommand());

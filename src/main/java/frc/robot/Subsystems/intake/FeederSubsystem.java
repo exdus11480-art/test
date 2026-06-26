@@ -9,20 +9,17 @@ import static edu.wpi.first.units.Units.*;
 
 public class FeederSubsystem extends SubsystemBase {
     // הגדרת המנוע (לפי הספריה החדשה של REV)
-    private final SparkMax m_motor = new SparkMax(1, MotorType.kBrushless); 
+    private final SparkMax m_motor = new SparkMax(18, MotorType.kBrushless); 
 
     // הגדרת שגרת ה-SysID 
     private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(
-            // 1. נתינת מתח למנוע
             (volts) -> m_motor.setVoltage(volts.in(Volts)),
-            // 2. רישום נתונים ללוג
             log -> {
+                // דיווח מתח אמיתי שנשלח למנוע
                 log.motor("feeder-motor")
-                   .voltage(Volts.of(m_motor.get() * 12.0));
-                log.motor("feeder-motor")
-                .voltage(Volts.of(m_motor.get() * 12.0))
+                .voltage(Volts.of(m_motor.getAppliedOutput() * 12.0)) // חשוב: שימוש ב-getAppliedOutput
                 .angularPosition(Rotations.of(m_motor.getEncoder().getPosition()))
                 .angularVelocity(RotationsPerSecond.of(m_motor.getEncoder().getVelocity() / 60.0));
             },
