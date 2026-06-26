@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
         shooterMotor.getConfigurator().apply(ShooterConfigs.shooterMotorConfig);
 
         shotMap.put(1.25, 57.3);
-        shotMap.put(2.07, 61.0);
+        shotMap.put(2.02, 60.8);
 
         SmartDashboard.setDefaultNumber("Shooter/Manual Test RPS", 50.0);
     }

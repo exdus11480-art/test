@@ -88,8 +88,8 @@ public class RobotContainer {
     driverXbox.y().whileTrue(
         shooter.manualShootCommand()
         .alongWith(
-            Commands.waitUntil(() -> shooter.getActualVelocity() >= 50) // תחליף את 20 במהירות היעד הידנית שלך
-            .andThen(intake.runFullIntake(8.2, 8))
+            Commands.waitUntil(() -> shooter.getActualVelocity() >= 55) 
+            .andThen(intake.runFullIntakePID(60, 65))
         )
     );
 
@@ -149,7 +149,7 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
                 double currentTarget = shooter.activateShooter();
                 return shooter.getActualVelocity() >= currentTarget - 2;
             })
-            .andThen(intake.runFullIntake(8.2, 8))
+            .andThen(intake.runFullIntakePID(60, 65))
         );
   }
 

@@ -2,25 +2,29 @@ package frc.robot.Subsystems.intake;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class IntakeConfigs {
-
-    static final int intakeMotorID = 4;
-    static final int feederMotorID = 18;
-    
+    public static final int intakeMotorID = 4;
+    public static final int feederMotorID = 18;
     static final int feederMotorCurrentLimit = 60;
+    
+    // הגדרות ה-PID של ה-Intake (Kraken) - נטענות בבנאי לתוך Slot 0
+    public static final Slot0Configs intakeVelocityGains = new Slot0Configs()
+            .withKS(0.1)
+            .withKV(0.11)
+            .withKP(0.2) 
+            .withKI(0.0)
+            .withKD(0.025);
 
-    static final SparkMaxConfig intakeConfigs =
-            (SparkMaxConfig) new SparkMaxConfig().inverted(false).smartCurrentLimit(feederMotorCurrentLimit);
-
-
-
-    static final TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration()
+    // הגדרות פיזיות של האינטייק
+    public static final TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs()
                     .withInverted(InvertedValue.Clockwise_Positive)
                     .withNeutralMode(NeutralModeValue.Brake))
@@ -33,7 +37,18 @@ public class IntakeConfigs {
                     .withPeakForwardVoltage(12)
                     .withPeakReverseVoltage(-12));
 
+    // הגדרות פידר (NEO)
+    public static final SparkMaxConfig feederMotorConfig = new SparkMaxConfig();
 
-                    
-} 
-
+    static {
+        feederMotorConfig.inverted(false)
+                         .smartCurrentLimit(feederMotorCurrentLimit);
+        feederMotorConfig.closedLoop
+                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                         .pid(0.00003, 0.0, 0.001)
+                         .feedForward
+                            .kV(0.13926)
+                            .kS(0.0)
+                            .kA(0.0);
+    }
+}
