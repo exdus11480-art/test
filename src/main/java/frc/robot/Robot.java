@@ -96,16 +96,13 @@ public class Robot extends TimedRobot {
 
     var swerveDrive = m_robotContainer.drivebase.getSwerveDrive();
     
-    // קריאת הזווית הרגילה של הרובוט (במעלות)
     double gyroYaw = swerveDrive.getPose().getRotation().getDegrees();
 
-    // שליחת הזווית המקורית לליימלייט בלי שום קומבינות
     LimelightHelpers.SetRobotOrientation("limelight", gyroYaw, 0, 0, 0, 0, 0);
 
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
     if (mt2.tagCount > 0) {
-        // הזרקה ישירה של ה-Pose כמו שהוא
         swerveDrive.setVisionMeasurementStdDevs(edu.wpi.first.math.VecBuilder.fill(0.7, 0.7, 9999999));
         swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
     }

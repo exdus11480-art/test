@@ -15,15 +15,13 @@ public class IntakeConfigs {
     public static final int feederMotorID = 18;
     static final int feederMotorCurrentLimit = 60;
     
-    // הגדרות ה-PID של ה-Intake (Kraken) - נטענות בבנאי לתוך Slot 0
     public static final Slot0Configs intakeVelocityGains = new Slot0Configs()
             .withKS(0.1)
             .withKV(0.11)
-            .withKP(0.2) 
+            .withKP(0.3) 
             .withKI(0.0)
             .withKD(0.025);
 
-    // הגדרות פיזיות של האינטייק
     public static final TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs()
                     .withInverted(InvertedValue.Clockwise_Positive)
@@ -37,7 +35,6 @@ public class IntakeConfigs {
                     .withPeakForwardVoltage(12)
                     .withPeakReverseVoltage(-12));
 
-    // הגדרות פידר (NEO)
     public static final SparkMaxConfig feederMotorConfig = new SparkMaxConfig();
 
     static {

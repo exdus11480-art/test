@@ -14,6 +14,7 @@ import frc.robot.Subsystems.swervedrive.SwerveSubsystem;
 public class autoAim extends SubsystemBase {
 
     private final PIDController turnController = new PIDController(0.37, 0.0, 0.0);
+    
 
     private final SwerveSubsystem swerve;
 
@@ -53,6 +54,11 @@ public class autoAim extends SubsystemBase {
 public void periodic() {
     double targetX_meters = Units.inchesToMeters(469.075);
     double targetY_meters = Units.inchesToMeters(158.84);
+
+
+
+    //double targetX_meters = Units.inchesToMeters(181.555);
+    //double targetY_meters = Units.inchesToMeters(158.84);
     double distance = getDistanceAndAngleToPoint(targetX_meters, targetY_meters)[0];
     
     SmartDashboard.putNumber("Shooter/distance", distance);

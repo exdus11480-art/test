@@ -19,23 +19,34 @@ public class Climb extends SubsystemBase {
     climbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
     followerClimbMotor.getConfigurator().apply(ClimbConfigs.climbMotorConfig);
     climbMotor.setPosition(0);
-    // followerClimbMotor.setControl(new Follower(climbMotor.getDeviceID(),
-    // MotorAlignmentValue.Aligned));
+
+    // followerClimbMotor.setControl(new Follower(climbMotor.getDeviceID(),MotorAlignmentValue.Aligned));
+
   }
 
-  public Command setVoltage(double voltage, int motor) {
+  public Command setVoltageFollower(double voltage ,double voltage2) {
 
-if (motor== 0){
+        return runEnd(
+            () -> {
+               climbMotor.setVoltage(voltage);
+                followerClimbMotor.setVoltage(voltage2);
+            },
+            () -> {
+                climbMotor.setVoltage(0);
+                followerClimbMotor.setVoltage(0);
+            }
+        );    
+  
+  }
+
+
+public Command setVoltage (double voltage){
+
     return startEnd(
         () -> climbMotor.setControl(new VoltageOut(voltage)),
         () -> climbMotor.setControl(new VoltageOut(0)));
-  } 
+}
 
-else {
-    return startEnd(
-        () -> followerClimbMotor.setControl(new VoltageOut(voltage)),
-        () -> followerClimbMotor.setControl(new VoltageOut(0)));
-  } 
-  }
+
 
 }

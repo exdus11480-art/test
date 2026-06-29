@@ -12,6 +12,7 @@ public class ClimbConfigs {
 
     static final int climbMotorID = 1;
     static final int followerClimbMotorID = 2;
+    
     static final TalonFXConfiguration climbMotorConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs()
                     .withInverted(InvertedValue.CounterClockwise_Positive)

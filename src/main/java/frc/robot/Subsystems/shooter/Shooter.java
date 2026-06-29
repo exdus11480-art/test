@@ -22,14 +22,17 @@ public class Shooter extends SubsystemBase {
     private double m_targetRPS = 0;
 
     double targetX_meters = Units.inchesToMeters(469.115);
-    double targetY_meters = Units.inchesToMeters(158.84);
+   double targetY_meters = Units.inchesToMeters(158.84);
+
+    //    double targetX_meters = Units.inchesToMeters(181.555);
+    //    double targetY_meters = Units.inchesToMeters(158.84);
 
     public Shooter(autoAim autoAimSubsystem) {
         this.autoAimSubsystem = autoAimSubsystem;
         shooterMotor = new TalonFX(ShooterConfigs.shooterMotorID);
         shooterMotor.getConfigurator().apply(ShooterConfigs.shooterMotorConfig);
-
-        shotMap.put(1.25, 57.3);
+        shotMap.put(1.55,54.0);
+        shotMap.put(3.07, 65.8);
         shotMap.put(2.02, 60.8);
 
         SmartDashboard.setDefaultNumber("Shooter/Manual Test RPS", 50.0);

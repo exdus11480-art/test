@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -39,11 +39,15 @@ import swervelib.SwerveInputStream;
  */
 
 public class RobotContainer {
-      double targetX_meters = Units.inchesToMeters(469.075);
+     double targetX_meters = Units.inchesToMeters(469.075);
       double targetY_meters = Units.inchesToMeters(158.84);
-  // Controllers
-  final CommandXboxController driverXbox = new CommandXboxController(0);
 
+      //  double targetX_meters = Units.inchesToMeters(181.555);
+      // double targetY_meters = Units.inchesToMeters(158.84);
+
+  // Controllers
+  // final CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandPS4Controller psController = new CommandPS4Controller(0);
   // Subsystems
   public final SwerveSubsystem drivebase = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/neo"));
@@ -60,8 +64,10 @@ public class RobotContainer {
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("shooter", shootCommand().withTimeout(5));
+    NamedCommands.registerCommand("shooter", shootCommand().withTimeout(10));
     NamedCommands.registerCommand("gyro", Commands.runOnce(() -> drivebase.zeroGyro()));
+    NamedCommands.registerCommand("aim", driveAndAim().withTimeout(1));
+
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
@@ -73,9 +79,9 @@ public class RobotContainer {
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () ->  driverXbox.getLeftY() * 0.5,
-                () ->  driverXbox.getLeftX() * 0.5)
-                .withControllerRotationAxis(() -> - driverXbox.getRightX() * 0.5)
+                () ->  psController.getLeftY() ,
+                () ->  psController.getLeftX() )
+                .withControllerRotationAxis(() -> - psController.getRightX() * 0.6)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true)));
@@ -83,9 +89,9 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.run(shooter::stop));
 
     // Gyro reset
-    driverXbox.a().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
+    psController.cross().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
 
-    driverXbox.y().whileTrue(
+    psController.triangle().whileTrue(
         shooter.manualShootCommand()
         .alongWith(
             Commands.waitUntil(() -> shooter.getActualVelocity() >= 55) 
@@ -94,17 +100,17 @@ public class RobotContainer {
     );
 
     // Climb commands
-    driverXbox.pov(0).whileTrue(rightclimbUpCommand());
-    driverXbox.pov(180).whileTrue(rightclimbDownCommand());
-    driverXbox.pov(90).whileTrue(leftclimbDownCommand());
-    driverXbox.pov(270).whileTrue(leftclimbUpCommand());
+    psController.pov(90).whileTrue(climpUp());
+    psController.pov(270).whileTrue(climbDown());
+    psController.pov(180).whileTrue(followerClimbMotorDown());
+    psController.pov(0).whileTrue(followerClimbMotorUp());
 
 
     // Shooter, Intake and Eject
-    driverXbox.rightTrigger().whileTrue(shootCommand());
-    driverXbox.rightBumper().whileTrue(ejectCommand());
-    driverXbox.leftBumper().whileTrue(driveAndAim());
-    driverXbox.leftTrigger().whileTrue(intakeCommand());
+    psController.R2().whileTrue(shootCommand());
+    psController.R1().whileTrue(ejectCommand());
+    psController.L1().whileTrue(driveAndAim());
+    psController.L2().whileTrue(intakeCommand());
   }
 
   private Command driveAndAim() {
@@ -115,29 +121,29 @@ public class RobotContainer {
       double targetAngle = targetData[1];
 
       double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(targetAngle);
-      double xTranslation = MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND);
-      double yTranslation = MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.DEADBAND);
+      double xTranslation = MathUtil.applyDeadband(psController.getLeftX(), OperatorConstants.DEADBAND);
+      double yTranslation = MathUtil.applyDeadband(psController.getLeftY(), OperatorConstants.DEADBAND);
 
       drivebase.drive(new Translation2d(- yTranslation, - xTranslation), rotationSpeed, true);
     }, drivebase, autoAimSubsystem); 
   }
 
-  private Command rightclimbUpCommand() {
-    return climb.setVoltage(3,0);
+  private Command followerClimbMotorUp() {
+    return climb.setVoltageFollower(3.0,3.0);
   }
 
 
-  private Command rightclimbDownCommand() {
-    return climb.setVoltage(-2,0);
+  private Command followerClimbMotorDown() {
+    return climb.setVoltageFollower(-2.0,-2.0);
   }
 
-    private Command leftclimbUpCommand() {
-    return climb.setVoltage(3,1);
+    private Command climpUp() {
+    return climb.setVoltage(3);
 
   }
 
-  private Command leftclimbDownCommand() {
-    return climb.setVoltage(-2,1);
+  private Command climbDown() {
+    return climb.setVoltage(-2);
   }
 
 
@@ -154,7 +160,7 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
   }
 
   private Command intakeCommand() {
-    return intake.runFullIntake(8, -10.1);
+    return intake.runFullIntakePID(50, -60);
   }
 
   private Command ejectCommand() {
@@ -162,7 +168,7 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
   }
 
   public Command getAutonomousCommand() {
-    return drivebase.getAutonomousCommand("New New Auto");
+    return drivebase.getAutonomousCommand("center blue");
   }
 
   public void setMotorBrake(boolean brake) {
