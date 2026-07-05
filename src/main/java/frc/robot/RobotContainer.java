@@ -79,8 +79,8 @@ public class RobotContainer {
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () ->  psController.getLeftY() ,
-                () ->  psController.getLeftX() )
+                () ->  psController.getLeftY(),
+                () ->  psController.getLeftX())
                 .withControllerRotationAxis(() -> - psController.getRightX() * 0.6)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
