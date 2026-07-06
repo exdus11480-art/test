@@ -15,6 +15,9 @@ public class autoAim extends SubsystemBase {
 
     private final PIDController turnController = new PIDController(0.37, 0.0, 0.0);
     
+    private final PIDController xClimbPID = new PIDController(1.0, 0.0, 0.0);
+    private final PIDController yClimbPID = new PIDController(1.0, 0.0, 0.0);
+
 
     private final SwerveSubsystem swerve;
 
@@ -50,11 +53,23 @@ public class autoAim extends SubsystemBase {
         return turnController.atSetpoint();
     }
 
+
+public double[] calculateClimbTranslation(Pose2d currentPose, double targetX, double targetY) {
+
+    double xSpeed = MathUtil.clamp(xClimbPID.calculate(currentPose.getX(), targetX), -0.4, 0.4);
+    double ySpeed = MathUtil.clamp(yClimbPID.calculate(currentPose.getY(), targetY), -0.4, 0.4);
+    
+    return new double[] { xSpeed, ySpeed };
+}
+
+
+
+
+
 @Override
 public void periodic() {
     double targetX_meters = Units.inchesToMeters(469.075);
     double targetY_meters = Units.inchesToMeters(158.84);
-
 
 
     //double targetX_meters = Units.inchesToMeters(181.555);
@@ -63,5 +78,6 @@ public void periodic() {
     
     SmartDashboard.putNumber("Shooter/distance", distance);
 }
+
 
 }

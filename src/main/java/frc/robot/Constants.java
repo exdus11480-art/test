@@ -48,4 +48,23 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+
+
+  public static class AutoAimConstants
+  {
+
+    //BLUE
+    public static final double blueClimbTargetX = Units.inchesToMeters(650.90); 
+    public static final double blueClimbTargetY = Units.inchesToMeters(170.22); 
+    public static final double blueClimbTargetAngle = 180.0;
+
+    //RED
+    public static final double redClimbTargetX = Units.inchesToMeters(181.555); 
+    public static final double redClimbTargetY = Units.inchesToMeters(147.47);  
+    public static final double redClimbTargetAngle = 180.0;
+
+
+  }
+
+
 }

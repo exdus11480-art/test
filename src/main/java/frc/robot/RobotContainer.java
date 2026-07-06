@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants.AutoAimConstants;
 import frc.robot.Constants.OperatorConstants;
 
 
@@ -40,10 +41,11 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
      double targetX_meters = Units.inchesToMeters(469.075);
-      double targetY_meters = Units.inchesToMeters(158.84);
+    double targetY_meters = Units.inchesToMeters(158.84);
 
       //  double targetX_meters = Units.inchesToMeters(181.555);
       // double targetY_meters = Units.inchesToMeters(158.84);
+
 
   // Controllers
   // final CommandXboxController driverXbox = new CommandXboxController(0);
@@ -105,6 +107,7 @@ public class RobotContainer {
     psController.pov(180).whileTrue(followerClimbMotorDown());
     psController.pov(0).whileTrue(followerClimbMotorUp());
 
+    psController.touchpad().whileTrue(driveToClimbAndAlign());
 
     // Shooter, Intake and Eject
     psController.R2().whileTrue(shootCommand());
@@ -114,9 +117,7 @@ public class RobotContainer {
   }
 
   private Command driveAndAim() {
-
     return Commands.run(() -> {
-
       double[] targetData = autoAimSubsystem.getDistanceAndAngleToPoint(targetX_meters, targetY_meters);
       double targetAngle = targetData[1];
 
@@ -128,24 +129,33 @@ public class RobotContainer {
     }, drivebase, autoAimSubsystem); 
   }
 
-  private Command followerClimbMotorUp() {
-    return climb.setVoltageFollower(3.0,3.0);
+private Command driveToClimbAndAlign() {
+    return Commands.run(() -> {
+      var currentPose = drivebase.getPose();
+      
+      double targetX;
+      double targetY;
+      double targetAngleDegrees;
+
+      // בדיקה אוטומטית של הברית הנוכחית מה-DriverStation
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+        targetX = AutoAimConstants.redClimbTargetX;
+        targetY = AutoAimConstants.redClimbTargetY;
+        targetAngleDegrees = AutoAimConstants.redClimbTargetAngle;
+      } else {
+        targetX = AutoAimConstants.blueClimbTargetX;
+        targetY = AutoAimConstants.blueClimbTargetY;
+        targetAngleDegrees = AutoAimConstants.blueClimbTargetAngle;
+      }
+
+      double[] translationSpeeds = autoAimSubsystem.calculateClimbTranslation(currentPose, targetX, targetY);
+      double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(Units.degreesToRadians(targetAngleDegrees));
+
+      // נסיעה (ודאו שהסימנים תואמים לדרייב הרגיל שלכם)
+      drivebase.drive(new Translation2d(translationSpeeds[0], translationSpeeds[1]), rotationSpeed, true);
+    }, drivebase, autoAimSubsystem);
   }
-
-
-  private Command followerClimbMotorDown() {
-    return climb.setVoltageFollower(-2.0,-2.0);
-  }
-
-    private Command climpUp() {
-    return climb.setVoltage(3);
-
-  }
-
-  private Command climbDown() {
-    return climb.setVoltage(-2);
-  }
-
 
 
   private Command shootCommand() {
@@ -174,5 +184,15 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
+
+
+private Command followerClimbMotorUp(){return climb.setVoltageFollower(3.0,3.0);}
+private Command followerClimbMotorDown(){return climb.setVoltageFollower(-2.0,-2.0);} 
+private Command climpUp(){return climb.setVoltage(3);}
+private Command climbDown() {return climb.setVoltage(-2);}
+
+
+
+
 
 }
