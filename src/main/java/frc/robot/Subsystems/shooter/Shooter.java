@@ -21,11 +21,11 @@ public class Shooter extends SubsystemBase {
 
     private double m_targetRPS = 0;
 
-//     double targetX_meters = Units.inchesToMeters(469.115);
-//    double targetY_meters = Units.inchesToMeters(158.84);
+    double targetX_meters = Units.inchesToMeters(469.115);
+    double targetY_meters = Units.inchesToMeters(158.84);
 
-       double targetX_meters = Units.inchesToMeters(181.555);
-       double targetY_meters = Units.inchesToMeters(158.84);
+      // double targetX_meters = Units.inchesToMeters(181.555);
+       //double targetY_meters = Units.inchesToMeters(158.84);
 
     public Shooter(autoAim autoAimSubsystem) {
         this.autoAimSubsystem = autoAimSubsystem;

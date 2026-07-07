@@ -31,7 +31,19 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "climbup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "climb1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbdown"
           }
         }
       ]
