@@ -39,11 +39,11 @@ import swervelib.SwerveInputStream;
  */
 
 public class RobotContainer {
-     double targetX_meters = Units.inchesToMeters(469.075);
-      double targetY_meters = Units.inchesToMeters(158.84);
+    //  double targetX_meters = Units.inchesToMeters(469.075);
+    //   double targetY_meters = Units.inchesToMeters(158.84);
 
-      //  double targetX_meters = Units.inchesToMeters(181.555);
-      // double targetY_meters = Units.inchesToMeters(158.84);
+       double targetX_meters = Units.inchesToMeters(181.555);
+      double targetY_meters = Units.inchesToMeters(158.84);
 
   // Controllers
   // final CommandXboxController driverXbox = new CommandXboxController(0);
@@ -67,7 +67,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("shooter", shootCommand().withTimeout(10));
     NamedCommands.registerCommand("gyro", Commands.runOnce(() -> drivebase.zeroGyro()));
     NamedCommands.registerCommand("aim", driveAndAim().withTimeout(1));
-
+    NamedCommands.registerCommand("climbup", followerClimbMotorUp().withTimeout(4));
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
@@ -168,7 +168,7 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
   }
 
   public Command getAutonomousCommand() {
-    return drivebase.getAutonomousCommand("center blue");
+    return drivebase.getAutonomousCommand("Right_blue");
   }
 
   public void setMotorBrake(boolean brake) {

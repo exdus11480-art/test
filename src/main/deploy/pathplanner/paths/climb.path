@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2515476190476198,
-        "y": 3.6786785714285717
+        "x": 2.533418803418803,
+        "y": 3.9833190883190888
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9468783790014405,
-        "y": 3.7015136647897546
+        "x": 1.6485629990542559,
+        "y": 3.7813059030691383
       },
       "isLocked": false,
-      "linkedName": "climb"
+      "linkedName": "123"
     },
     {
       "anchor": {
-        "x": 0.9816071428571436,
-        "y": 3.6786785714285717
+        "x": 1.4610398860398859,
+        "y": 3.737834757834759
       },
       "prevControl": {
-        "x": 1.3013962124869767,
-        "y": 3.6369658629090815
+        "x": 2.166579778386029,
+        "y": 3.89168486686115
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "nowweneedtoclimb"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Blue",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
