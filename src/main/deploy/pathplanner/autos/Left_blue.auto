@@ -5,21 +5,27 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "gyro"
+            "pathName": "Left_blue"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "center blue"
+            "waitTime": 1.0
           }
         },
         {
           "type": "named",
           "data": {
             "name": "aim"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {

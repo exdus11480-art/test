@@ -3,16 +3,18 @@
   "robotLength": 0.67,
   "holonomicMode": true,
   "pathFolders": [
-    "New Folder",
-    "New New Folder"
+    "Blue",
+    "Red"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "New Folder"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 50.0,
+  "robotMass": 32.0,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.04,
@@ -27,7 +29,7 @@
   "frModuleY": -0.24765,
   "blModuleX": -0.24765,
   "blModuleY": 0.24765,
-  "brModuleX": -0.24765,
+  "brModuleX": -0.248,
   "brModuleY": -0.24765,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,

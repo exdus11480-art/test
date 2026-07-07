@@ -68,12 +68,11 @@ public double[] calculateClimbTranslation(Pose2d currentPose, double targetX, do
 
 @Override
 public void periodic() {
-    double targetX_meters = Units.inchesToMeters(469.075);
+    //  double targetX_meters = Units.inchesToMeters(469.075);
+    //  double targetY_meters = Units.inchesToMeters(158.84);
+
+    double targetX_meters = Units.inchesToMeters(181.555);
     double targetY_meters = Units.inchesToMeters(158.84);
-
-
-    //double targetX_meters = Units.inchesToMeters(181.555);
-    //double targetY_meters = Units.inchesToMeters(158.84);
     double distance = getDistanceAndAngleToPoint(targetX_meters, targetY_meters)[0];
     
     SmartDashboard.putNumber("Shooter/distance", distance);
