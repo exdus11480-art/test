@@ -54,13 +54,13 @@ public final class Constants
   {
 
     //BLUE
-    public static final double blueClimbTargetX = Units.inchesToMeters(650.90); 
-    public static final double blueClimbTargetY = Units.inchesToMeters(170.22); 
+    public static final double blueClimbTargetX = 1.55; 
+    public static final double blueClimbTargetY = 4.186; 
     public static final double blueClimbTargetAngle = 180.0;
 
     //RED
-    public static final double redClimbTargetX = Units.inchesToMeters(181.555); 
-    public static final double redClimbTargetY = Units.inchesToMeters(147.47);  
+    public static final double redClimbTargetX = 14.985; 
+    public static final double redClimbTargetY = 4.292;  
     public static final double redClimbTargetAngle = 180.0;
 
 

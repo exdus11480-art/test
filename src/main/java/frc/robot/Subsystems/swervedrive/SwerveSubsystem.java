@@ -6,6 +6,11 @@ package frc.robot.Subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
@@ -16,22 +21,19 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -347,9 +349,13 @@ public class SwerveSubsystem extends SubsystemBase {
    * facing toward 0.
    */
   public void zeroGyro() {
+    if(DriverStation.getAlliance().orElse(Alliance.Red).equals(Alliance.Blue)){
     swerveDrive.zeroGyro();
+  }else{
+    swerveDrive.setGyro(new Rotation3d(new Rotation2d(Math.PI)));
+    resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(Math.PI)));
   }
-
+}
   /**
    * Checks if the alliance is red, defaults to false if alliance isn't available.
    *
@@ -567,8 +573,8 @@ try {
       (speedsRobotRelative, moduleFeedForwards) -> {
           edu.wpi.first.math.kinematics.ChassisSpeeds invertedSpeeds = 
               new edu.wpi.first.math.kinematics.ChassisSpeeds(
-                  -speedsRobotRelative.vxMetersPerSecond*0.5, 
-                  -speedsRobotRelative.vyMetersPerSecond*0.5, 
+                  speedsRobotRelative.vxMetersPerSecond*0.5, 
+                  speedsRobotRelative.vyMetersPerSecond*0.5, 
                   speedsRobotRelative.omegaRadiansPerSecond
               );
           swerveDrive.setChassisSpeeds(invertedSpeeds);

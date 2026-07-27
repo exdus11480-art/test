@@ -40,7 +40,7 @@ import swervelib.SwerveInputStream;
  */
 
 public class RobotContainer {
-    //   double targetX_meters = Units.inchesToMeters(469.075);
+      // double targetX_meters = Units.inchesToMeters(469.075);
     //  double targetY_meters = Units.inchesToMeters(158.84);
 
     double targetX_meters = Units.inchesToMeters(181.555);
@@ -66,12 +66,12 @@ public class RobotContainer {
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("shooter", shootCommand().withTimeout(8));
+    NamedCommands.registerCommand("shooter", shootCommand().withTimeout(7));
     NamedCommands.registerCommand("gyro", Commands.runOnce(() -> drivebase.zeroGyro()));
     NamedCommands.registerCommand("aim", driveAndAim().withTimeout(1));
 
     NamedCommands.registerCommand("climbup", followerClimbMotorUp().withTimeout(3));
-    NamedCommands.registerCommand("climbdown", followerClimbMotorDown().withTimeout(2));
+    NamedCommands.registerCommand("climbdown", followerClimbMotorDown().withTimeout(5));
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
@@ -83,8 +83,8 @@ public class RobotContainer {
     drivebase.setDefaultCommand(
         drivebase.driveFieldOriented(
             SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () ->  psController.getLeftY(),
-                () ->  psController.getLeftX())
+                () ->  -psController.getLeftY(),
+                () ->  -psController.getLeftX())
                 .withControllerRotationAxis(() -> - psController.getRightX() * 0.6)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
@@ -93,7 +93,7 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.run(shooter::stop));
 
     // Gyro reset
-    psController.cross().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()));
+    psController.cross().onTrue(Commands.runOnce(() -> drivebase.zeroGyro()).ignoringDisable(true));
 
     psController.triangle().whileTrue(
         shooter.manualShootCommand()
@@ -106,8 +106,8 @@ public class RobotContainer {
     // Climb commands
     psController.pov(90).whileTrue(climpUp());
     psController.pov(270).whileTrue(climbDown());
-    psController.pov(180).whileTrue(followerClimbMotorDown());
-    psController.pov(0).whileTrue(followerClimbMotorUp());
+    psController.pov(0).whileTrue(followerClimbMotorDown());
+    psController.pov(180).whileTrue(followerClimbMotorUp());
 
     psController.touchpad().whileTrue(driveToClimbAndAlign());
 
@@ -139,7 +139,6 @@ private Command driveToClimbAndAlign() {
       double targetY;
       double targetAngleDegrees;
 
-      // בדיקה אוטומטית של הברית הנוכחית מה-DriverStation
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
         targetX = AutoAimConstants.redClimbTargetX;
@@ -154,7 +153,6 @@ private Command driveToClimbAndAlign() {
       double[] translationSpeeds = autoAimSubsystem.calculateClimbTranslation(currentPose, targetX, targetY);
       double rotationSpeed = autoAimSubsystem.calculateRotationSpeed(Units.degreesToRadians(targetAngleDegrees));
 
-      // נסיעה (ודאו שהסימנים תואמים לדרייב הרגיל שלכם)
       drivebase.drive(new Translation2d(translationSpeeds[0], translationSpeeds[1]), rotationSpeed, true);
     }, drivebase, autoAimSubsystem);
   }
@@ -188,8 +186,8 @@ return shooter.runShooterVelocity(() -> shooter.activateShooter())
   }
 
 
-private Command followerClimbMotorUp(){return climb.setVoltageFollower(3.0,3.0);}
-private Command followerClimbMotorDown(){return climb.setVoltageFollower(-2.0,-2.0);} 
+private Command followerClimbMotorUp(){return climb.setVoltageFollower(-3.0,-3.0);}
+private Command followerClimbMotorDown(){return climb.setVoltageFollower(2.0,2.0);} 
 private Command climpUp(){return climb.setVoltage(3);}
 private Command climbDown() {return climb.setVoltage(-2);}
 

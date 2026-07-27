@@ -31,9 +31,9 @@ public class Shooter extends SubsystemBase {
         this.autoAimSubsystem = autoAimSubsystem;
         shooterMotor = new TalonFX(ShooterConfigs.shooterMotorID);
         shooterMotor.getConfigurator().apply(ShooterConfigs.shooterMotorConfig);
-        shotMap.put(1.55,54.0);
-        shotMap.put(3.07, 65.8);
-        shotMap.put(2.02, 60.8);
+        shotMap.put(1.55,51.0);
+        shotMap.put(3.07, 62.8);
+        shotMap.put(2.02, 58.0);
 
         SmartDashboard.setDefaultNumber("Shooter/Manual Test RPS", 50.0);
     }

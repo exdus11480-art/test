@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
     if (mt2.tagCount > 0) {
-        swerveDrive.setVisionMeasurementStdDevs(edu.wpi.first.math.VecBuilder.fill(0.7, 0.7, 9999999));
+        swerveDrive.setVisionMeasurementStdDevs(edu.wpi.first.math.VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY));
         swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
     }
 }
